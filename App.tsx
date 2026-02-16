@@ -116,7 +116,7 @@ function App() {
         </main>
 
         <footer className="mt-20 text-center text-gray-600 text-sm">
-          <p>Powered by Navigator IDX/FX • Wall Journey</p>
+          <p>Powered by Navigator IDX/FX</p>
         </footer>
       </div>
     </div>

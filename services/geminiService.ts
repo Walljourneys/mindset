@@ -74,6 +74,7 @@ export const generateTradingNarrative = async (quote: string): Promise<Generated
   }
 };
 
+
 export const generateTradingVisual = async (takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
