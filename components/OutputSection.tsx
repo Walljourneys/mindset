@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Hash, Bookmark, Share2, Download, ImageIcon, Sparkles } from 'lucide-react';
+import { Copy, Check, Hash, Bookmark, Share2, Download, ImageIcon, Sparkles, ClipboardCheck } from 'lucide-react';
 import { GeneratedContent } from '../types';
 
 interface OutputSectionProps {
@@ -13,14 +13,17 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
   const [copiedTags, setCopiedTags] = useState(false);
 
   const copyToClipboard = (text: string, isTags: boolean) => {
-    navigator.clipboard.writeText(text);
-    if (isTags) {
-      setCopiedTags(true);
-      setTimeout(() => setCopiedTags(false), 2000);
-    } else {
-      setCopiedText(true);
-      setTimeout(() => setCopiedText(false), 2000);
-    }
+    navigator.clipboard.writeText(text).then(() => {
+      if (isTags) {
+        setCopiedTags(true);
+        setTimeout(() => setCopiedTags(false), 2000);
+      } else {
+        setCopiedText(true);
+        setTimeout(() => setCopiedText(false), 2000);
+      }
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
   };
 
   const downloadImage = () => {
@@ -68,10 +71,14 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
           <div className="mt-6 flex justify-end">
             <button
               onClick={() => copyToClipboard(data.narrative, false)}
-              className="flex items-center gap-2 text-sm font-bold text-trading-accent hover:text-white transition-all bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10"
+              className={`flex items-center gap-2 text-sm font-bold transition-all px-4 py-2 rounded-lg ${
+                copiedText 
+                ? 'bg-trading-green/20 text-trading-green' 
+                : 'text-trading-accent bg-white/5 hover:bg-white/10 hover:text-white'
+              }`}
             >
-              {copiedText ? <Check size={16} /> : <Copy size={16} />}
-              <span>{copiedText ? 'Copied to clipboard' : 'Copy Caption'}</span>
+              {copiedText ? <ClipboardCheck size={16} /> : <Copy size={16} />}
+              <span>{copiedText ? 'Copied Caption!' : 'Copy Caption'}</span>
             </button>
           </div>
         </div>
@@ -91,16 +98,20 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
             <span className="text-xs text-gray-600 font-mono italic">{data.hashtags.length} tags total</span>
             <button
               onClick={() => copyToClipboard(hashtagsString, true)}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-trading-green transition-colors font-bold"
+              className={`flex items-center gap-2 text-sm font-bold transition-all px-3 py-1.5 rounded-md ${
+                copiedTags 
+                ? 'text-trading-green bg-trading-green/10' 
+                : 'text-gray-400 hover:text-trading-green hover:bg-white/5'
+              }`}
             >
-              {copiedTags ? <Check size={16} /> : <Share2 size={16} />}
-              <span>{copiedTags ? 'Copied' : 'Copy All Tags'}</span>
+              {copiedTags ? <ClipboardCheck size={16} /> : <Copy size={16} />}
+              <span>{copiedTags ? 'Hashtags Copied!' : 'Copy All Tags'}</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. Visual Generation Section (Paling Bawah) */}
+      {/* 4. Visual Generation Section */}
       <div className="pt-8 flex flex-col items-center">
         {!data.imageUrl && !isImageLoading && (
           <button
