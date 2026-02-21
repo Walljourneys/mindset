@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Copy, CheckCircle, Download, Image as ImageIcon, Sparkles, Hash } from 'lucide-react';
+import { 
+  Copy, 
+  CheckCircle, 
+  Download, 
+  Image as ImageIcon, 
+  Sparkles, 
+  Hash, 
+  Clapperboard, 
+  Mic, 
+  Video 
+} from 'lucide-react';
 import { GeneratedContent } from '../types';
 
 interface OutputSectionProps {
@@ -28,119 +38,166 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     if (!data.imageUrl) return;
     const link = document.createElement('a');
     link.href = data.imageUrl;
-    link.download = `TN-Visual-${Date.now()}.png`; // Nama file otomatis
+    link.download = `TN-Visual-${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div className="w-full max-w-5xl bg-gray-800/80 backdrop-blur-md rounded-3xl border border-gray-700 shadow-2xl overflow-hidden animate-fade-in">
+    <div className="w-full max-w-5xl bg-gray-800/80 backdrop-blur-md rounded-3xl border border-gray-700 shadow-2xl overflow-hidden animate-fade-in mb-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
         
-        {/* KOLOM KIRI: TEKS (NARRATIVE & HASHTAGS) */}
+        {/* KOLOM KIRI: TEKS & SCRIPT */}
         <div className="p-8 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-700 relative">
           
-          <div className="mb-6">
+          {/* Section: Key Takeaway */}
+          <div className="mb-8">
             <h3 className="text-sm font-bold text-trading-green uppercase tracking-widest flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4" />
-              Key Takeaway
+              Core Message
             </h3>
-            <p className="text-xl font-bold text-white leading-snug border-l-4 border-trading-green pl-4">
+            <p className="text-xl font-black text-white leading-tight border-l-4 border-trading-green pl-4 italic">
               "{data.keyTakeaway}"
             </p>
           </div>
 
-          <div className="flex-grow space-y-6">
+          <div className="space-y-8 flex-grow">
+            {/* Section: Narrative */}
             <div>
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Narrative Caption</h3>
-              <div className="text-gray-300 leading-relaxed whitespace-pre-wrap font-medium">
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Share2 className="w-3 h-3" /> Narrative Caption
+              </h3>
+              <div className="text-gray-300 leading-relaxed whitespace-pre-wrap font-medium bg-gray-900/30 p-4 rounded-xl border border-white/5">
                 {data.narrative}
               </div>
             </div>
 
+            {/* Section: Hashtags */}
             <div>
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
-                <Hash className="w-4 h-4" /> Hashtags
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Hash className="w-3 h-3" /> Viral Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 {data.hashtags.map((tag, index) => (
-                  <span key={index} className="text-xs font-medium text-blue-400 bg-blue-900/20 px-2 py-1 rounded-md border border-blue-500/20">
+                  <span key={index} className="text-xs font-bold text-blue-400 bg-blue-900/30 px-3 py-1.5 rounded-lg border border-blue-500/20">
                     {tag}
                   </span>
                 ))}
               </div>
             </div>
+
+            {/* NEW SECTION: SHORT VIDEO SCRIPT */}
+            <div className="pt-8 border-t border-gray-700/50">
+              <h3 className="text-sm font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2 mb-5">
+                <Clapperboard className="w-4 h-4" />
+                Short Video Script (15-20s)
+              </h3>
+              <div className="space-y-4">
+                {data.videoScript?.map((step, idx) => (
+                  <div key={idx} className="group bg-gray-900/50 rounded-2xl p-5 border border-white/5 hover:border-orange-500/30 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[10px] bg-orange-500/20 text-orange-400 px-2 py-1 rounded-md font-black uppercase tracking-tighter">
+                        {step.part}
+                      </span>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex gap-3 items-start group-hover:translate-x-1 transition-transform">
+                        <Video className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-gray-400 leading-snug">
+                          <span className="text-gray-500 font-bold uppercase mr-1">Visual:</span>
+                          {step.visual}
+                        </p>
+                      </div>
+                      <div className="flex gap-3 items-start group-hover:translate-x-1 transition-transform">
+                        <Mic className="w-4 h-4 text-trading-green mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-white font-bold leading-normal">
+                          "{step.audio}"
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* TOMBOL COPY (Nempel di bawah kolom teks) */}
+          {/* BUTTON COPY */}
           <button
             onClick={handleCopy}
-            className={`mt-8 w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold transition-all duration-300 shadow-lg
+            className={`mt-10 w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl
               ${isCopied 
-                ? 'bg-green-600 text-white shadow-green-900/50' 
-                : 'bg-gray-700 text-gray-200 hover:bg-gray-600 hover:shadow-gray-900/50 border border-gray-600'
+                ? 'bg-green-600 text-white shadow-green-900/40 scale-[0.98]' 
+                : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 hover:from-gray-600 hover:to-gray-700 border border-white/10'
               }`}
           >
-            {isCopied ? <CheckCircle className="w-5 h-5 animate-bounce" /> : <Copy className="w-5 h-5" />}
-            {isCopied ? 'Caption Tersalin!' : 'Copy Caption & Hashtags'}
+            {isCopied ? <CheckCircle className="w-5 h-5 animate-pulse" /> : <Copy className="w-5 h-5" />}
+            {isCopied ? 'Copied to Clipboard' : 'Copy All Text'}
           </button>
         </div>
 
-        {/* KOLOM KANAN: GAMBAR (VISUAL ENGINE) */}
-        <div className="p-8 lg:p-10 bg-gray-900/50 flex flex-col items-center justify-center relative">
-          
-          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest w-full text-left mb-6">
-            Visual Story (9:16)
-          </h3>
+        {/* KOLOM KANAN: VISUAL ENGINE */}
+        <div className="p-8 lg:p-10 bg-gray-900/30 flex flex-col items-center justify-start relative">
+          <div className="sticky top-10 w-full flex flex-col items-center">
+            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest w-full text-left mb-6 flex items-center gap-2">
+              <ImageIcon className="w-4 h-4" /> Story Visual Template
+            </h3>
 
-          <div className="w-full max-w-[320px] mx-auto relative rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-700/50 group">
-            
-            {/* STATE 1: LOADING SHIMMER */}
-            {isImageLoading && (
-              <div className="w-full aspect-[9/16] bg-gray-800 animate-pulse flex flex-col items-center justify-center gap-4">
-                <ImageIcon className="w-10 h-10 text-gray-600 animate-bounce" />
-                <p className="text-sm text-gray-500 font-medium">AI is rendering magic...</p>
-              </div>
-            )}
+            <div className="w-full max-w-[320px] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-[6px] border-gray-800 group">
+              
+              {/* STATE 1: LOADING */}
+              {isImageLoading && (
+                <div className="w-full aspect-[9/16] bg-gray-800 animate-pulse flex flex-col items-center justify-center gap-4">
+                  <div className="relative">
+                    <ImageIcon className="w-12 h-12 text-gray-700 animate-bounce" />
+                    <Sparkles className="w-6 h-6 text-trading-green absolute -top-2 -right-2 animate-ping" />
+                  </div>
+                  <p className="text-xs text-gray-500 font-black uppercase tracking-widest">Rendering Art...</p>
+                </div>
+              )}
 
-            {/* STATE 2: GAMBAR SUDAH JADI */}
-            {!isImageLoading && data.imageUrl && (
-              <>
-                <img 
-                  src={data.imageUrl} 
-                  alt="Trading Visual" 
-                  className="w-full aspect-[9/16] object-cover transition-transform duration-700 group-hover:scale-105" 
-                />
-                
-                {/* TOMBOL DOWNLOAD (Muncul saat di-hover/di HP selalu ada tapi agak transparan) */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+              {/* STATE 2: READY */}
+              {!isImageLoading && data.imageUrl && (
+                <>
+                  <img 
+                    src={data.imageUrl} 
+                    alt="Trading Visual" 
+                    className="w-full aspect-[9/16] object-cover transition-transform duration-1000 group-hover:scale-110" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end pb-10 px-6">
+                    <button
+                      onClick={handleDownloadImage}
+                      className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-2xl font-black uppercase tracking-tighter shadow-2xl hover:bg-trading-green hover:text-black transition-colors transform translate-y-4 group-hover:translate-y-0 duration-500"
+                    >
+                      <Download className="w-5 h-5" />
+                      Download 8K PNG
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* STATE 3: IDLE */}
+              {!isImageLoading && !data.imageUrl && (
+                <div className="w-full aspect-[9/16] bg-gray-800/50 flex items-center justify-center p-8 text-center">
                   <button
-                    onClick={handleDownloadImage}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-full font-bold shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+                    onClick={onGenerateVisual}
+                    className="group/btn flex flex-col items-center gap-6"
                   >
-                    <Download className="w-5 h-5" />
-                    Download 8K
+                    <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center shadow-2xl group-hover/btn:bg-trading-green group-hover/btn:text-black transition-all duration-500 group-hover/btn:scale-110">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                    <div className="space-y-2">
+                      <span className="block font-black text-white uppercase tracking-widest text-sm">Generate Visual</span>
+                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-tight">AI will create 9:16 Cinematic Art</span>
+                    </div>
                   </button>
                 </div>
-              </>
-            )}
-
-            {/* STATE 3: BELUM GENERATE GAMBAR */}
-            {!isImageLoading && !data.imageUrl && (
-              <div className="w-full aspect-[9/16] bg-gray-800/50 flex items-center justify-center p-6">
-                <button
-                  onClick={onGenerateVisual}
-                  className="flex flex-col items-center gap-4 text-gray-400 hover:text-white transition-colors"
-                >
-                  <div className="p-4 bg-gray-700 rounded-full shadow-lg">
-                    <ImageIcon className="w-8 h-8" />
-                  </div>
-                  <span className="font-medium text-sm text-center">Click to Generate<br/>Vertical Visual</span>
-                </button>
-              </div>
-            )}
-
+              )}
+            </div>
+            
+            <p className="mt-8 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">
+              Designed for Instagram & TikTok Stories
+            </p>
           </div>
         </div>
 
@@ -148,5 +205,8 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     </div>
   );
 };
+
+// Pastikan import 'Share2' sudah ada di barisan lucide-react bro!
+import { Share2 } from 'lucide-react'; 
 
 export default OutputSection;

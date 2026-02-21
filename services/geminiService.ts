@@ -9,40 +9,38 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey || 'DUMMY_KEY_FOR_BUILD' });
 
-// Tambahkan parameter mood (default: 'mentor')
 export const generateTradingNarrative = async (quote: string, mood: string = 'mentor'): Promise<GeneratedContent> => {
   if (!apiKey) {
     throw new Error("API Key is missing. Please check your configuration.");
   }
 
+  // Gunakan model yang support JSON Schema & Video Scripting
   const modelId = "gemini-3-flash-preview";
   
-  // Logic instruksi berdasarkan mood
   const moodDirectives = {
-    tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Be the strict 'drill sergeant' of trading. Use punchy, hard-hitting words.",
-    stoic: "TONE: Calm, philosophical, focused on internal control. Use Stoic principles (Marcus Aurelius vibe). Emphasize detachment from outcomes.",
-    mentor: "TONE: Educational, wise, professional senior mentor. Like a father figure in trading. Emphasize long-term consistency and risk management."
+    tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Be the strict 'drill sergeant'. Use harsh, slap-in-the-face Indonesian/English.",
+    stoic: "TONE: Calm, philosophical, focused on internal control. Use Stoic principles (Marcus Aurelius vibe). Emphasize emotional detachment.",
+    mentor: "TONE: Educational, wise, professional senior mentor. Like a father figure. Emphasize long-term consistency and risk management."
   };
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
   const prompt = `
-      You are a Viral Content Strategist and Trading Psychologist.
-      Target Audience: Retail traders who are struggling with emotions.
+      You are a Viral Content Strategist for TikTok, Instagram Reels, and YouTube Shorts.
+      Current Persona: ${currentMoodTone}
+      Target Audience: Retail traders struggling with emotions.
       
-      ${currentMoodTone}
-      
-      Task: Transform this thought: "${quote}" into a viral social media masterpiece.
+      Task: Transform this thought: "${quote}" into a complete viral content package.
 
       Guidelines:
-      1. STYLE: Use "The Power of Silence". Don't be wordy. Use short, punchy sentences. 
-      2. STRUCTURE: 
-        - Hook: A controversial or deep truth about trading psychology.
-        - Body: Explain why most traders fail at this specific point (pain points).
-        - Logic: Give a solution based on the requested TONE.
-        - CTA: Ask a question that forces them to comment.
-      3. LANGUAGE: Indonesian (Casual but Professional/Bro-talk) if the input is Indonesian.
-      4. FORMAT: Use proper line breaks for readability on mobile.
+      1. STYLE: Use "The Power of Silence". Short, punchy, high-impact sentences.
+      2. NARRATIVE: Create an engaging caption with a hook, psychological lesson, and CTA.
+      3. VIDEO SCRIPT: Create a 15-20 second video script divided into 3 segments:
+         - HOOK: Catch attention in the first 3 seconds.
+         - VALUE: The core lesson or "slap".
+         - CTA: Driving comments or follows.
+         Each segment MUST have "visual" direction (what to show) and "audio" (what to say).
+      4. LANGUAGE: Indonesian (Casual/Bro-talk) if input is Indonesian.
     `;
 
   try {
@@ -56,19 +54,32 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
           properties: {
             narrative: {
               type: Type.STRING,
-              description: "The full caption/narrative for the post.",
+              description: "The full social media caption.",
             },
             hashtags: {
               type: Type.ARRAY,
               items: { type: Type.STRING },
-              description: "List of hashtags including the # symbol.",
+              description: "Relevant trading & psychology hashtags.",
             },
             keyTakeaway: {
               type: Type.STRING,
-              description: "A short, punchy summary of the lesson.",
+              description: "A short, punchy summary sentence.",
+            },
+            videoScript: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  part: { type: Type.STRING, description: "Segment name (Hook, Value, or CTA)" },
+                  visual: { type: Type.STRING, description: "Camera angle, B-roll, or action direction." },
+                  audio: { type: Type.STRING, description: "Spoken words for the voice-over." }
+                },
+                required: ["part", "visual", "audio"]
+              },
+              description: "A 3-part script for short-form video."
             }
           },
-          required: ["narrative", "hashtags", "keyTakeaway"],
+          required: ["narrative", "hashtags", "keyTakeaway", "videoScript"],
         },
       },
     });
@@ -83,25 +94,22 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
   }
 };
 
-// Tambahkan parameter mood di sini juga
 export const generateTradingVisual = async (takeaway: string, mood: string = 'mentor'): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // Visual vibe berdasarkan mood
   const visualVibe = {
-    tamparan: "Vibe: Intense, high contrast, stormy weather through office window, aggressive lightning, deep shadows, red/orange amber lighting. Mood: Aggressive, high-stakes, wake-up call.",
-    stoic: "Vibe: Zen, minimalist, monochrome or soft blue tones, single candle or clean setup, morning fog, extreme order and calm. Mood: Focused, detached, disciplined.",
-    mentor: "Vibe: Classic luxury, wood panels, warm library lighting, expensive watch, multiple clean monitors, professional gold/teal highlights. Mood: Successful, wise, structured."
+    tamparan: "Vibe: Intense, high contrast, stormy weather, aggressive lightning, deep shadows, red/orange amber lighting.",
+    stoic: "Vibe: Zen, minimalist, monochrome or soft blue tones, single candle, morning fog, extreme calm.",
+    mentor: "Vibe: Classic luxury, wood panels, warm library lighting, professional gold/teal highlights, clean trading setup."
   };
 
   const currentVibe = visualVibe[mood as keyof typeof visualVibe] || visualVibe.mentor;
 
-  // Added explicit instructions to exclude text/writing
   const imagePrompt = `A high-end, cinematic vertical (9:16) photography for a social media story. 
   Subject: A professional trader's environment. 
   ${currentVibe}
   Style: 8k resolution, photorealistic, clean composition.
-  CRITICAL: Do NOT include any text, words, letters, labels, or typography in the image. The image should be PURELY visual and artistic with zero writing.
+  CRITICAL: Do NOT include any text or typography. 
   Context theme: ${takeaway}`;
 
   try {
