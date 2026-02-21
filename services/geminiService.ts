@@ -9,32 +9,41 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey || 'DUMMY_KEY_FOR_BUILD' });
 
-export const generateTradingNarrative = async (quote: string): Promise<GeneratedContent> => {
+// Tambahkan parameter mood (default: 'mentor')
+export const generateTradingNarrative = async (quote: string, mood: string = 'mentor'): Promise<GeneratedContent> => {
   if (!apiKey) {
     throw new Error("API Key is missing. Please check your configuration.");
   }
 
   const modelId = "gemini-3-flash-preview";
   
+  // Logic instruksi berdasarkan mood
+  const moodDirectives = {
+    tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Be the strict 'drill sergeant' of trading. Use punchy, hard-hitting words.",
+    stoic: "TONE: Calm, philosophical, focused on internal control. Use Stoic principles (Marcus Aurelius vibe). Emphasize detachment from outcomes.",
+    mentor: "TONE: Educational, wise, professional senior mentor. Like a father figure in trading. Emphasize long-term consistency and risk management."
+  };
+
+  const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
+
   const prompt = `
-    You are an expert Trading Psychologist and professional Social Media Strategist for the financial sector.
-    
-    Your task is to take the user's input (a trading quote or thought) and transform it into a highly engaging, disciplined, and educational social media caption (suitable for Instagram, LinkedIn, or Twitter/X).
+      You are a Viral Content Strategist and Trading Psychologist.
+      Target Audience: Retail traders who are struggling with emotions.
+      
+      ${currentMoodTone}
+      
+      Task: Transform this thought: "${quote}" into a viral social media masterpiece.
 
-    The user's input: "${quote}"
-
-    Guidelines:
-    1. Tone: Professional, Stoic, Disciplined, Motivational, yet grounded in reality. Avoid "get rich quick" hype. Focus on risk management, psychology, and consistency.
-    2. Language: DETECT the language of the quote. If the quote is in Indonesian, generate the narrative in Indonesian. If English, use English.
-    3. Structure:
-       - Start with a strong hook related to the quote.
-       - Expand on the psychological or technical lesson.
-       - End with a call to action or a thought-provoking question.
-    4. Hashtags: Provide 15-20 relevant, high-traffic trading hashtags mixed with niche psychology tags.
-    5. Key Takeaway: A single short sentence summarizing the core lesson.
-
-    Return the response as a JSON object.
-  `;
+      Guidelines:
+      1. STYLE: Use "The Power of Silence". Don't be wordy. Use short, punchy sentences. 
+      2. STRUCTURE: 
+        - Hook: A controversial or deep truth about trading psychology.
+        - Body: Explain why most traders fail at this specific point (pain points).
+        - Logic: Give a solution based on the requested TONE.
+        - CTA: Ask a question that forces them to comment.
+      3. LANGUAGE: Indonesian (Casual but Professional/Bro-talk) if the input is Indonesian.
+      4. FORMAT: Use proper line breaks for readability on mobile.
+    `;
 
   try {
     const response = await ai.models.generateContent({
@@ -74,15 +83,23 @@ export const generateTradingNarrative = async (quote: string): Promise<Generated
   }
 };
 
-export const generateTradingVisual = async (takeaway: string): Promise<string | undefined> => {
+// Tambahkan parameter mood di sini juga
+export const generateTradingVisual = async (takeaway: string, mood: string = 'mentor'): Promise<string | undefined> => {
   if (!apiKey) return undefined;
+
+  // Visual vibe berdasarkan mood
+  const visualVibe = {
+    tamparan: "Vibe: Intense, high contrast, stormy weather through office window, aggressive lightning, deep shadows, red/orange amber lighting. Mood: Aggressive, high-stakes, wake-up call.",
+    stoic: "Vibe: Zen, minimalist, monochrome or soft blue tones, single candle or clean setup, morning fog, extreme order and calm. Mood: Focused, detached, disciplined.",
+    mentor: "Vibe: Classic luxury, wood panels, warm library lighting, expensive watch, multiple clean monitors, professional gold/teal highlights. Mood: Successful, wise, structured."
+  };
+
+  const currentVibe = visualVibe[mood as keyof typeof visualVibe] || visualVibe.mentor;
 
   // Added explicit instructions to exclude text/writing
   const imagePrompt = `A high-end, cinematic vertical (9:16) photography for a social media story. 
   Subject: A professional trader's environment. 
-  Vibe: Modern, dark luxury, minimalist office, focused discipline. 
-  Lighting: Cinematic teal and amber highlights, deep contrast, soft focus backgrounds with glowing candlesticks charts. 
-  Mood: Focused, calm, disciplined, successful. 
+  ${currentVibe}
   Style: 8k resolution, photorealistic, clean composition.
   CRITICAL: Do NOT include any text, words, letters, labels, or typography in the image. The image should be PURELY visual and artistic with zero writing.
   Context theme: ${takeaway}`;

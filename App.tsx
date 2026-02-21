@@ -11,14 +11,19 @@ function App() {
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [result, setResult] = useState<GeneratedContent | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // NEW: State untuk menyimpan pilihan mood
+  const [activeMood, setActiveMood] = useState('mentor');
 
+  // UPDATE: Terima quote dari InputSection, tapi gunakan activeMood dari state
   const handleGenerateText = async (quote: string) => {
     setLoadingState('loading');
     setError(null);
     setResult(null);
 
     try {
-      const textData = await generateTradingNarrative(quote);
+      // Kirim quote DAN mood ke AI
+      const textData = await generateTradingNarrative(quote, activeMood);
       setResult(textData);
       setLoadingState('success');
     } catch (err: any) {
@@ -33,7 +38,8 @@ function App() {
     
     setIsImageLoading(true);
     try {
-      const imageUrl = await generateTradingVisual(result.keyTakeaway);
+      // Kirim takeaway DAN mood ke AI Visual
+      const imageUrl = await generateTradingVisual(result.keyTakeaway, activeMood);
       if (imageUrl) {
         setResult({ ...result, imageUrl });
       }
@@ -57,7 +63,7 @@ function App() {
       <div className="relative z-10 container mx-auto px-4 py-12 md:py-20 flex flex-col items-center">
         
         {/* Header */}
-        <header className="text-center mb-12 max-w-2xl">
+        <header className="text-center mb-8 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-trading-green/10 text-trading-green border border-trading-green/20 mb-6 animate-fade-in">
             <TrendingUp size={14} />
             <span className="text-xs font-bold tracking-wider uppercase">Trading Psychology</span>
@@ -74,28 +80,59 @@ function App() {
 
         {/* Main Content Area */}
         <main className="w-full flex flex-col items-center">
+          
+          {/* NEW: Mood Selector UI */}
+          <div className="w-full max-w-2xl mb-8 animate-fade-in">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block text-center">
+              Pilih Gaya Konten
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { id: 'mentor', label: 'Mentor', emoji: '👴', activeColor: 'border-blue-500 bg-blue-500/10 text-blue-400' },
+                { id: 'tamparan', label: 'Tamparan', emoji: '🥊', activeColor: 'border-red-500 bg-red-500/10 text-red-400' },
+                { id: 'stoic', label: 'Stoic', emoji: '🏛️', activeColor: 'border-teal-500 bg-teal-500/10 text-teal-400' }
+              ].map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setActiveMood(m.id)}
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300
+                    ${activeMood === m.id 
+                      ? `${m.activeColor} shadow-[0_0_20px_rgba(0,0,0,0.3)] scale-105` 
+                      : 'border-gray-800 bg-gray-900/50 text-gray-500 hover:border-gray-700 hover:bg-gray-800'
+                    }`}
+                >
+                  <span className="text-2xl mb-2 filter drop-shadow-md">{m.emoji}</span>
+                  <span className="text-[11px] font-black uppercase tracking-wider">{m.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Input Section tetap sama, dia tinggal manggil onGenerate pas diklik */}
           <InputSection onGenerate={handleGenerateText} isLoading={loadingState === 'loading'} />
 
           {loadingState === 'loading' && <LoadingSpinner />}
 
           {loadingState === 'error' && (
-            <div className="w-full max-w-2xl bg-red-900/20 border border-red-500/30 text-red-200 p-4 rounded-xl flex items-center gap-3 animate-fade-in">
+            <div className="w-full max-w-2xl mt-8 bg-red-900/20 border border-red-500/30 text-red-200 p-4 rounded-xl flex items-center gap-3 animate-fade-in">
               <AlertCircle className="flex-shrink-0" />
               <p>{error}</p>
             </div>
           )}
 
           {loadingState === 'success' && result && (
-            <OutputSection 
-              data={result} 
-              onGenerateVisual={handleGenerateImage} 
-              isImageLoading={isImageLoading} 
-            />
+            <div className="mt-8 w-full flex justify-center">
+              <OutputSection 
+                data={result} 
+                onGenerateVisual={handleGenerateImage} 
+                isImageLoading={isImageLoading} 
+              />
+            </div>
           )}
 
           {/* Empty State / Initial Instructions */}
           {loadingState === 'idle' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mt-8 opacity-50">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mt-12 opacity-50">
               <div className="p-6 rounded-xl border border-white/5 bg-white/5">
                 <BarChart3 className="mb-3 text-gray-500" />
                 <h3 className="font-bold text-white mb-2">Quote Input</h3>
