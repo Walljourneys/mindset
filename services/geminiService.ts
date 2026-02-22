@@ -14,7 +14,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     throw new Error("API Key is missing. Please check your configuration.");
   }
 
-  const modelId = "gemini-3-flash";
+  const modelId = "gemini-1.5-flash";
   
   const moodDirectives = {
     tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Use harsh, punchy Indonesian/English.",
