@@ -23,13 +23,12 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
   const [isCopied, setIsCopied] = useState(false);
   const [isScriptCopied, setIsScriptCopied] = useState(false);
 
-  // 1. FUNGSI COPY LENGKAP (Core Message + Caption + Hashtag) - DIPERBAIKI
+  // 1. FUNGSI COPY LENGKAP
   const handleCopy = async () => {
     const formattedHashtags = data.hashtags
       .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
       .join(' ');
       
-    // Gabungkan Core Message di paling atas, pakai tanda kutip biar jelas
     const textToCopy = `"${data.keyTakeaway}"\n\n${data.narrative}\n\n${formattedHashtags}`;
     
     try {
@@ -41,7 +40,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // 2. FUNGSI COPY KHUSUS SCRIPT VIDEO
+  // 2. FUNGSI COPY SCRIPT VIDEO
   const handleCopyScript = async () => {
     if (!data.videoScript) return;
 
@@ -58,15 +57,56 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // 3. FUNGSI DOWNLOAD GAMBAR
+  // 3. FUNGSI DOWNLOAD GAMBAR DENGAN WATERMARK (CANVAS)
   const handleDownloadImage = () => {
     if (!data.imageUrl) return;
-    const link = document.createElement('a');
-    link.href = data.imageUrl;
-    link.download = `TN-Visual-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    // Izinkan cross-origin jika gambar dari URL luar
+    img.crossOrigin = "anonymous";
+    img.src = data.imageUrl;
+
+    img.onload = () => {
+      // Set ukuran canvas sama dengan ukuran asli gambar
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // 1. Gambar foto aslinya dulu
+      ctx?.drawImage(img, 0, 0);
+
+      // 2. Setting gaya Watermark
+      const watermarkText = "© Wall Journey";
+      const fontSize = Math.floor(canvas.width * 0.04); // Ukuran dinamis (4% dari lebar gambar)
+      
+      if (ctx) {
+        ctx.font = `bold ${fontSize}px sans-serif`;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)"; // Warna putih transparan
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+
+        // Tambah shadow dikit biar kebaca di background apapun
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        // Tentukan posisi pojok kanan bawah (dengan margin 5%)
+        const margin = canvas.width * 0.05;
+        ctx.fillText(watermarkText, canvas.width - margin, canvas.height - margin);
+
+        // 3. Proses Download
+        const watermarkedImage = canvas.toDataURL("image/png");
+        const link = document.createElement('a');
+        link.href = watermarkedImage;
+        link.download = `WallJourney-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    };
   };
 
   return (
@@ -76,7 +116,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
         {/* KOLOM KIRI: TEKS & SCRIPT */}
         <div className="p-8 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-700 relative">
           
-          {/* Section: Key Takeaway (Core Message) */}
+          {/* Section: Key Takeaway */}
           <div className="mb-8">
             <h3 className="text-sm font-bold text-trading-green uppercase tracking-widest flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4" />
@@ -112,7 +152,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
 
-            {/* --- TOMBOL COPY DIPINDAH KE SINI --- */}
             <button
               onClick={handleCopy}
               className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl
@@ -123,7 +162,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               {isCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               {isCopied ? 'All Text Copied!' : 'Copy Full Caption (Inc. Core Message)'}
             </button>
-            {/* ------------------------------------ */}
 
             {/* SECTION: SHORT VIDEO SCRIPT */}
             <div className="pt-8 border-t border-gray-700/50">
@@ -132,7 +170,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
                   <Clapperboard className="w-4 h-4" />
                   Short Video Script
                 </h3>
-                {/* TOMBOL COPY SCRIPT KHUSUS */}
                 <button 
                   onClick={handleCopyScript}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all
@@ -173,13 +210,11 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* KOLOM KANAN: VISUAL ENGINE (TETAP SAMA) */}
+        {/* KOLOM KANAN: VISUAL ENGINE */}
         <div className="p-8 lg:p-10 bg-gray-900/30 flex flex-col items-center justify-start relative">
-            {/* ... Isi kolom kanan visual tetap sama seperti sebelumnya ... */}
-            <div className="sticky top-10 w-full flex flex-col items-center">
+          <div className="sticky top-10 w-full flex flex-col items-center">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest w-full text-left mb-6 flex items-center gap-2">
               <ImageIcon className="w-4 h-4" /> Story Visual Template
             </h3>
