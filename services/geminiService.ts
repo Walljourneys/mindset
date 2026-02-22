@@ -52,7 +52,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
        SEMESTA TERPILIH: ${selectedUniverse}
 
        - Deskripsi harus detail, lucu, dan kaya secara visual agar menarik perhatian.
-       - Pastikan karakter Chibi Suhu terlihat dominan di scene tersebut.
+       - Pastikan karakter Chibi terlihat dominan di scene tersebut.
 
     5. BAHASA: Indonesia (Casual/Bro-talk).
   `;
@@ -117,7 +117,7 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
     
     ADEGAN DINAMIS: ${visualDescription}
     
-    GAYA: Seni digital profesional ala Pixar, garis tebal playful bersih, shading halus, detail tinggi, komposisi dinamis, pencahayaan hangat sinematik, warna pastel lembut, kedalaman lapangan luas, kualitas master studio, 8k.
+    GAYA: Kartun chibi lucu semi-anime, seni digital profesional ala Pixar, garis tebal playful bersih, shading halus, detail tinggi, komposisi dinamis, pencahayaan hangat sinematik, warna pastel lembut, kedalaman lapangan luas, kualitas master studio, 8k.
     KRITIS: Sertakan teks berbahasa Indonesia tulisan tangan di latar belakang, tanpa typo: "${takeaway}"
     NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, rambut berantakan, kumis penuh, jambang pipi, wajah anak laki-laki muda, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, naga.
   `;
