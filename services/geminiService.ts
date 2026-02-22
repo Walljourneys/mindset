@@ -8,49 +8,40 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey || 'DUMMY_KEY_FOR_BUILD' });
 
+// 1. FUNGSI GENERATE TEKS & SKENARIO VISUAL (OTAK KREATIF)
 export const generateTradingNarrative = async (quote: string, mood: string = 'mentor'): Promise<GeneratedContent> => {
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please check your configuration.");
-  }
+  if (!apiKey) throw new Error("API Key is missing. Please check your configuration.");
 
-const modelId = "gemini-3-flash-preview";
+  const modelId = "gemini-3-flash-preview";
   
   const moodDirectives = {
-    tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Use harsh, punchy Indonesian/English.",
-    stoic: "TONE: Calm, philosophical, focused on internal control. Use Stoic principles. Emphasize emotional detachment.",
-    mentor: "TONE: Educational, wise, professional senior mentor. Emphasize long-term consistency and risk management."
+    tamparan: "TONE: Agresif, langsung, 'tough love'. Sadarkan mereka dari kebiasaan judi. Gunakan bahasa Indonesia yang tegas dan nendang.",
+    stoic: "TONE: Tenang, filosofis, fokus pada kontrol internal. Gunakan prinsip Stoic (vibe Marcus Aurelius).",
+    mentor: "TONE: Edukatif, bijak, profesional. Seperti sosok ayah atau senior yang sangat berpengalaman."
   };
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
-// ... bagian atas file tetap sama ...
-
   const prompt = `
-      You are a Viral Content Strategist and a world-class Creative Art Director.
-      Current Persona: ${currentMoodTone}
-      Target Audience: Retail traders in Indonesia.
-      
-      Task: Transform this thought: "${quote}" into a complete viral content package.
+    Kamu adalah Strategi Konten Viral dan Creative Art Director kelas dunia.
+    Persona Saat Ini: ${currentMoodTone}
+    Target Audiens: Trader retail di Indonesia (Saham, Crypto, atau Forex).
+    
+    Tugas: Ubah pemikiran ini: "${quote}" menjadi paket konten viral lengkap dalam format JSON.
 
-      Guidelines:
-      1. STYLE: Use "The Power of Silence". Short, punchy, high-impact sentences.
-      2. NARRATIVE: Create an engaging caption with a hook, psychological lesson, and CTA.
-      3. VIDEO SCRIPT: Create a 15-20 second script (Hook, Value, CTA) with visual & audio directions.
-      
-      4. VISUAL SCENE (CRITICAL): Your job is to create a visual METAPHOR, not just a scene.
-         - STRICTLY FORBIDDEN: Do NOT describe an office, a trading desk, a library, or any room with multiple monitors. We are bored of these!
-         - GO WILD & FANTASTICAL: Place the Chibi character in an unexpected, non-trading location that metaphorically represents the quote's lesson.
-         - EXAMPLES OF CREATIVE METAPHORS (Do not copy, use as inspiration):
-           - Quote about patience: Chibi is fishing in a small boat on a calm lake, but the "fish" are giant, glowing candlesticks.
-           - Quote about fighting ego: Chibi is a tiny knight fighting a massive, shadowy dragon made of red "LOSS" charts on top of a volcano.
-           - Quote about growth: Chibi is farming in a field, planting seeds that grow into money trees, while pulling weeds labeled "FOMO".
-           - Quote about market chaos: Chibi is a conductor of an orchestra where all the instruments are broken and exploding, with notes flying everywhere.
-         - The description must be detailed, funny, and visually rich.
+    Panduan:
+    1. GAYA: Gunakan "Kekuatan Diam". Kalimat pendek, nendang, dampak tinggi.
+    2. NARASI: Buat caption menarik dengan hook, pelajaran psikologi, dan CTA.
+    3. SKRIP VIDEO: Buat script 15-20 detik (Hook, Value, CTA) dengan arahan visual & audio.
+    
+    4. ADEGAN VISUAL (KRITIS): Tugasmu buat METAFOR visual yang unik untuk karakter Chibi.
+       - BEBAS & FANTASTIS: Letakkan karakter Chibi di lokasi tak terduga yang mewakili pelajaran quote secara metaforis.
+       - DILARANG KERAS: Jangan deskripsikan kantor, meja trading, monitor, atau perpustakaan. Kita bosan dengan itu!
+       - CONTOH: Chibi menunggangi banteng emas di atas awan, Chibi memancing candlestick di danau, atau Chibi bertarung dengan naga merah (grafik loss).
+       - Deskripsi harus detail, lucu, dan kaya secara visual.
 
-      5. LANGUAGE: Indonesian (Casual/Bro-talk).
-    `;
-
-// ... bagian bawah file tetap sama ...
+    5. BAHASA: Indonesia (Casual/Bro-talk).
+  `;
 
   try {
     const response = await ai.models.generateContent({
@@ -64,10 +55,9 @@ const modelId = "gemini-3-flash-preview";
             narrative: { type: Type.STRING },
             hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
             keyTakeaway: { type: Type.STRING },
-            // FIELD BARU: AI bakal nentuin scene unik di sini
             visualDescription: { 
-                type: Type.STRING, 
-                description: "Detailed creative scene description for the chibi character." 
+              type: Type.STRING, 
+              description: "Deskripsi adegan visual unik untuk karakter chibi." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -94,36 +84,32 @@ const modelId = "gemini-3-flash-preview";
   }
 };
 
-// ... import dan fungsi generateTradingNarrative di atas TETAP SAMA ...
-
-// Fungsi Visual dengan Karakter Baru (Mature Version)
+// 2. FUNGSI GENERATE GAMBAR (MESIN PELUKIS)
 export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // KITA UPDATE DESKRIPSI KARAKTER DI SINI:
+  // KARAKTER UTAMA: Representasi Suhu (45 Tahun)
   const characterDescription = `
-    MAIN CHARACTER: Mature chibi man (representing 45 years old) with a distinguished look, large head, tanned skin. 
-    HAIR: Short, neat side-swept style (sisir pinggir), mostly dark but with distinct grey/silver hair at the temples (sides).
-    FACE: Has a well-groomed salt-and-pepper beard (mixed dark and grey hair), clean-shaven upper lip (no mustache). 
-    ATTIRE: Wearing cool sunglasses, rolled-up long-sleeve shirt, dark pants, black belt, watch, casual shoes.
+    KARAKTER UTAMA: Pria chibi dewasa (usia 45 tahun) dengan penampilan terhormat, kepala besar, kulit kecokelatan. 
+    RAMBUT: Pendek, rapi bergaya sisir pinggir (side-swept), sebagian besar gelap tapi dengan rambut abu-abu/perak yang jelas di pelipis (sides).
+    WAJAH: Memiliki jenggot beruban di dagu (salt-and-pepper), TIDAK ada kumis (no mustache), TIDAK ada jambang di pipi. 
+    PAKAIAN: Memakai kacamata hitam keren, jam tangan, pakaian kasual profesional (seperti kemeja lengan panjang digulung).
   `;
 
-  // Gabungkan jadi prompt raksasa
   const imagePrompt = `
-    Cute chibi style illustration (Pixar-like digital art).
+    Ilustrasi gaya chibi lucu (seni digital mirip Pixar).
     
     ${characterDescription}
     
-    DYNAMIC SCENE: ${visualDescription}
+    ADEGAN DINAMIS: ${visualDescription}
     
-    STYLE: Cute semi-anime, thick playful clean lines, smooth shading, high detail, dynamic composition, 8k resolution, cinematic warm lighting.
-    CRITICAL: Include this Indonesian text handwritten in the background: "${takeaway}"
-    NEGATIVE PROMPT: realistic, photorealistic, real human proportions, messy hair, full mustache, young boy face, horror, blurry, deformed face, bad anatomy, extra limbs, watermark, logo.
+    GAYA: Seni digital profesional ala Pixar, garis tebal playful bersih, shading halus, detail tinggi, komposisi dinamis, pencahayaan hangat sinematik, warna pastel lembut, kedalaman lapangan luas, kualitas master studio, 8k.
+    KRITIS: Sertakan teks berbahasa Indonesia tulisan tangan di latar belakang, tanpa typo: "${takeaway}"
+    NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, rambut berantakan, kumis penuh, jambang pipi, wajah anak laki-laki muda, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      // Menggunakan model gambar terbaru
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{ text: imagePrompt }],
