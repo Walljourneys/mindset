@@ -34,11 +34,20 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     2. NARASI: Buat caption menarik dengan hook, pelajaran psikologi, dan CTA.
     3. SKRIP VIDEO: Buat script 15-20 detik (Hook, Value, CTA) dengan arahan visual & audio.
     
-    4. ADEGAN VISUAL (KRITIS): Tugasmu buat METAFOR visual yang unik untuk karakter Chibi.
-       - BEBAS & FANTASTIS: Letakkan karakter Chibi di lokasi tak terduga yang mewakili pelajaran quote secara metaforis.
-       - DILARANG KERAS: Jangan deskripsikan kantor, meja trading, monitor, atau perpustakaan. Kita bosan dengan itu!
-       - CONTOH: Chibi menunggangi banteng emas di atas awan, Chibi memancing candlestick di danau, atau Chibi bertarung dengan naga merah (grafik loss).
-       - Deskripsi harus detail, lucu, dan kaya secara visual.
+    4. ADEGAN VISUAL (VARIASI WAJIB): Pilih salah satu dari 4 "Universe" berikut secara acak untuk setiap konten agar tidak membosankan:
+       
+       A. MODERN CHILL: Kantor atau ruangan trading mewah yang modern/futuristik, tapi buat suasana yang unik (misal: di dalam kapal selam, di kabin pesawat jet, atau kantor di tengah hutan pinus).
+       
+       B. LOCAL VIBE (Indonesia): Suasana lokal yang relatable. Misal: Chibi Suhu lagi ngopi di Warung Kopi pinggir jalan, duduk di pos ronda, atau santai di teras rumah gadang sambil liat chart di tablet.
+       
+       C. SURREAL FANTASY: Metafora luar angkasa atau dunia mimpi. Misal: Berjalan di atas jam raksasa, memetik buah koin di kebun awan, atau bermeditasi di atas air terjun candlestick hijau.
+       
+       D. SLICE OF LIFE: Kegiatan sehari-hari yang jauh dari trading. Misal: Berkebun, memasak, atau main catur di taman, tapi ada elemen trading kecil (misal: celemeknya ada logo "Bull Market").
+
+       CATATAN: 
+       - JANGAN terpaku pada Naga atau Surfing terus-menerus. 
+       - Deskripsi harus mendetail tentang pencahayaan (misal: golden hour, neon vibes, atau soft morning light).
+       - Pastikan karakter "Suhu 45 tahun" tetap terlihat dominan dan santai.
 
     5. BAHASA: Indonesia (Casual/Bro-talk).
   `;
