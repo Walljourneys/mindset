@@ -126,8 +126,6 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
     
     ATMOSFER: Pencahayaan hangat sinematik, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable.
     
-    KRITIS: Di dinding atau area udara di belakang karakter utama terdapat tulisan tangan berbahasa Indonesia: "${takeaway}"
-    
     NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, teks rusak, sepi, kosong.
   `;
 

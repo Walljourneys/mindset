@@ -57,7 +57,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // 3. FUNGSI DOWNLOAD GAMBAR DENGAN WATERMARK (CANVAS)
+  // 3. FUNGSI DOWNLOAD: ANTI-TYPO + WATERMARK (CANVAS ENGINE)
   const handleDownloadImage = () => {
     if (!data.imageUrl) return;
 
@@ -65,47 +65,76 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     const ctx = canvas.getContext('2d');
     const img = new Image();
 
-    // Izinkan cross-origin jika gambar dari URL luar
     img.crossOrigin = "anonymous";
     img.src = data.imageUrl;
 
     img.onload = () => {
-      // Set ukuran canvas sama dengan ukuran asli gambar
       canvas.width = img.width;
       canvas.height = img.height;
+      if (!ctx) return;
 
-      // 1. Gambar foto aslinya dulu
-      ctx?.drawImage(img, 0, 0);
+      // a. Gambar foto asli dari AI
+      ctx.drawImage(img, 0, 0);
 
-      // 2. Setting gaya Watermark
-      const watermarkText = "© Wall Journey";
-      const fontSize = Math.floor(canvas.width * 0.04); // Ukuran dinamis (4% dari lebar gambar)
+      // b. Setting Core Message (Anti-Typo)
+      const text = data.keyTakeaway.toUpperCase(); 
+      const padding = canvas.width * 0.08;
+      const maxWidth = canvas.width - (padding * 2);
+      const fontSize = Math.floor(canvas.width * 0.055); 
       
-      if (ctx) {
-        ctx.font = `bold ${fontSize}px sans-serif`;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)"; // Warna putih transparan
-        ctx.textAlign = "right";
-        ctx.textBaseline = "bottom";
+      ctx.font = `900 ${fontSize}px sans-serif`;
+      ctx.textAlign = "center";
+      
+      const words = text.split(' ');
+      let line = '';
+      const lines = [];
+      const lineHeight = fontSize * 1.25;
 
-        // Tambah shadow dikit biar kebaca di background apapun
-        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-
-        // Tentukan posisi pojok kanan bawah (dengan margin 5%)
-        const margin = canvas.width * 0.05;
-        ctx.fillText(watermarkText, canvas.width - margin, canvas.height - margin);
-
-        // 3. Proses Download
-        const watermarkedImage = canvas.toDataURL("image/png");
-        const link = document.createElement('a');
-        link.href = watermarkedImage;
-        link.download = `WallJourney-${Date.now()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n] + ' ';
+        let metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          lines.push(line);
+          line = words[n] + ' ';
+        } else {
+          line = testLine;
+        }
       }
+      lines.push(line);
+
+      let y = canvas.height * 0.15;
+
+      // Background Box Hitam (Readability)
+      const boxHeight = lines.length * lineHeight + padding;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(padding / 2, y - fontSize - (padding/4), canvas.width - padding, boxHeight);
+
+      // Cetak Teks Utama
+      ctx.fillStyle = "#ffffff";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+      ctx.shadowBlur = 10;
+      
+      lines.forEach((l) => {
+        ctx.fillText(l.trim(), canvas.width / 2, y);
+        y += lineHeight;
+      });
+
+      // c. Cetak Watermark (Branding)
+      ctx.shadowBlur = 0; 
+      ctx.font = `bold ${fontSize * 0.5}px sans-serif`;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.textAlign = "right";
+      const margin = canvas.width * 0.05;
+      ctx.fillText("© WALL JOURNEY", canvas.width - margin, canvas.height - margin);
+
+      // d. Trigger Download
+      const finalImage = canvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.href = finalImage;
+      link.download = `WallJourney-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     };
   };
 
@@ -115,8 +144,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
         
         {/* KOLOM KIRI: TEKS & SCRIPT */}
         <div className="p-8 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-700 relative">
-          
-          {/* Section: Key Takeaway */}
           <div className="mb-8">
             <h3 className="text-sm font-bold text-trading-green uppercase tracking-widest flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4" />
@@ -128,7 +155,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
           </div>
 
           <div className="space-y-8 flex-grow">
-            {/* Section: Narrative */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Share2 className="w-3 h-3" /> Narrative Caption
@@ -138,7 +164,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
 
-            {/* Section: Hashtags */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Hash className="w-3 h-3" /> Viral Tags
@@ -163,7 +188,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               {isCopied ? 'All Text Copied!' : 'Copy Full Caption (Inc. Core Message)'}
             </button>
 
-            {/* SECTION: SHORT VIDEO SCRIPT */}
             <div className="pt-8 border-t border-gray-700/50">
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-sm font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2">
