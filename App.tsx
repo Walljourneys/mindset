@@ -33,13 +33,15 @@ function App() {
     }
   };
 
-  const handleGenerateImage = async () => {
+    const handleGenerateImage = async () => {
     if (!result || isImageLoading) return;
     
     setIsImageLoading(true);
     try {
-      // Kirim takeaway DAN mood ke AI Visual
-      const imageUrl = await generateTradingVisual(result.keyTakeaway, activeMood);
+      // UPDATE: Kirim visualDescription (deskripsi scene unik dari AI) 
+      // dan keyTakeaway (teks untuk ditulis di background)
+      const imageUrl = await generateTradingVisual(result.visualDescription, result.keyTakeaway);
+      
       if (imageUrl) {
         setResult({ ...result, imageUrl });
       }

@@ -8,8 +8,9 @@ export interface GeneratedContent {
   narrative: string;
   hashtags: string[];
   keyTakeaway: string;
+  visualDescription: string; // Tambahkan ini
+  videoScript: any[];
   imageUrl?: string;
-  videoScript: VideoScriptPart[]; // Ini jantung dari Content Factory kita
 }
 
 export interface HistoryItem extends GeneratedContent {

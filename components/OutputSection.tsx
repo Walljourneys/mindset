@@ -23,13 +23,14 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
   const [isCopied, setIsCopied] = useState(false);
   const [isScriptCopied, setIsScriptCopied] = useState(false);
 
-  // 1. FUNGSI COPY CAPTION & HASHTAG
+  // 1. FUNGSI COPY LENGKAP (Core Message + Caption + Hashtag) - DIPERBAIKI
   const handleCopy = async () => {
     const formattedHashtags = data.hashtags
       .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
       .join(' ');
       
-    const textToCopy = `${data.narrative}\n\n${formattedHashtags}`;
+    // Gabungkan Core Message di paling atas, pakai tanda kutip biar jelas
+    const textToCopy = `"${data.keyTakeaway}"\n\n${data.narrative}\n\n${formattedHashtags}`;
     
     try {
       await navigator.clipboard.writeText(textToCopy);
@@ -40,7 +41,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // 2. FUNGSI COPY KHUSUS SCRIPT VIDEO (Untuk AI Video Generator)
+  // 2. FUNGSI COPY KHUSUS SCRIPT VIDEO
   const handleCopyScript = async () => {
     if (!data.videoScript) return;
 
@@ -75,6 +76,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
         {/* KOLOM KIRI: TEKS & SCRIPT */}
         <div className="p-8 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-700 relative">
           
+          {/* Section: Key Takeaway (Core Message) */}
           <div className="mb-8">
             <h3 className="text-sm font-bold text-trading-green uppercase tracking-widest flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4" />
@@ -86,6 +88,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
           </div>
 
           <div className="space-y-8 flex-grow">
+            {/* Section: Narrative */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Share2 className="w-3 h-3" /> Narrative Caption
@@ -95,6 +98,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
 
+            {/* Section: Hashtags */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Hash className="w-3 h-3" /> Viral Tags
@@ -108,6 +112,19 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
 
+            {/* --- TOMBOL COPY DIPINDAH KE SINI --- */}
+            <button
+              onClick={handleCopy}
+              className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl
+                ${isCopied 
+                  ? 'bg-green-600 text-white shadow-green-900/40 scale-[0.98]' 
+                  : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 hover:from-gray-600 hover:to-gray-700 border border-white/10'}`}
+            >
+              {isCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+              {isCopied ? 'All Text Copied!' : 'Copy Full Caption (Inc. Core Message)'}
+            </button>
+            {/* ------------------------------------ */}
+
             {/* SECTION: SHORT VIDEO SCRIPT */}
             <div className="pt-8 border-t border-gray-700/50">
               <div className="flex items-center justify-between mb-5">
@@ -115,7 +132,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
                   <Clapperboard className="w-4 h-4" />
                   Short Video Script
                 </h3>
-                {/* TOMBOL COPY SCRIPT BARU */}
+                {/* TOMBOL COPY SCRIPT KHUSUS */}
                 <button 
                   onClick={handleCopyScript}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all
@@ -157,21 +174,12 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
             </div>
           </div>
 
-          <button
-            onClick={handleCopy}
-            className={`mt-10 w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl
-              ${isCopied 
-                ? 'bg-green-600 text-white shadow-green-900/40' 
-                : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 border border-white/10'}`}
-          >
-            {isCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-            {isCopied ? 'Caption Tersalin' : 'Copy Full Caption'}
-          </button>
         </div>
 
-        {/* KOLOM KANAN: VISUAL ENGINE */}
+        {/* KOLOM KANAN: VISUAL ENGINE (TETAP SAMA) */}
         <div className="p-8 lg:p-10 bg-gray-900/30 flex flex-col items-center justify-start relative">
-          <div className="sticky top-10 w-full flex flex-col items-center">
+            {/* ... Isi kolom kanan visual tetap sama seperti sebelumnya ... */}
+            <div className="sticky top-10 w-full flex flex-col items-center">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest w-full text-left mb-6 flex items-center gap-2">
               <ImageIcon className="w-4 h-4" /> Story Visual Template
             </h3>
@@ -214,7 +222,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
             <p className="mt-8 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Designed for Instagram & TikTok Stories</p>
           </div>
         </div>
-
       </div>
     </div>
   );
