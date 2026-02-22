@@ -22,6 +22,18 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
+  // --- BAGIAN BARU: LOGIKA ACAK SEMESTA (KITA PAKSA AI GANTI KASET) ---
+  const visualUniverses = [
+    "SEMESATA A (MODERN CHILL): Tempatkan Chibi di kantor/ruangan trading yang mewah tapi UNIK (contoh: di dalam kapal selam kaca, di kabin pesawat pribadi, atau di rumah pohon futuristik). Pencahayaan: Neon atau Golden Hour.",
+    "SEMESTA B (LOCAL VIBE INDONESIA): Tempatkan Chibi di suasana lokal yang merakyat. (contoh: di Warung Kopi (Warkop) pinggir jalan, di pos ronda, di tengah sawah terasering, atau di pasar tradisional). Pencahayaan: Alami pagi/sore.",
+    "SEMESTA C (SURREAL METAPHOR): Tempatkan Chibi di dunia mimpi/metafora. (contoh: memancing di danau uang, berkebun menanam koin, atau berjalan di atas jembatan candlestick di atas awan). HINDARI NAGA. Pencahayaan: Magis/Fantasi.",
+    "SEMESTA D (SLICE OF LIFE): Tempatkan Chibi melakukan hobi sehari-hari yang tenang. (contoh: memasak di dapur, bermain catur di taman, atau membaca di perpustakaan kuno). Ada elemen trading kecil tersembunyi. Pencahayaan: Hangat dan nyaman."
+  ];
+
+  // Pilih satu semesta secara acak lewat kode
+  const selectedUniverse = visualUniverses[Math.floor(Math.random() * visualUniverses.length)];
+  // -------------------------------------------------------------------
+
   const prompt = `
     Kamu adalah Strategi Konten Viral dan Creative Art Director kelas dunia.
     Persona Saat Ini: ${currentMoodTone}
@@ -34,20 +46,13 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     2. NARASI: Buat caption menarik dengan hook, pelajaran psikologi, dan CTA.
     3. SKRIP VIDEO: Buat script 15-20 detik (Hook, Value, CTA) dengan arahan visual & audio.
     
-    4. ADEGAN VISUAL (VARIASI WAJIB): Pilih salah satu dari 4 "Universe" berikut secara acak untuk setiap konten agar tidak membosankan:
+    4. ADEGAN VISUAL (KRITIS - WAJIB IKUTI): 
+       Tugasmu adalah membuat deskripsi visual yang unik berdasarkan "SEMESTA" yang terpilih di bawah ini.
        
-       A. MODERN CHILL: Kantor atau ruangan trading mewah yang modern/futuristik, tapi buat suasana yang unik (misal: di dalam kapal selam, di kabin pesawat jet, atau kantor di tengah hutan pinus).
-       
-       B. LOCAL VIBE (Indonesia): Suasana lokal yang relatable. Misal: Chibi Suhu lagi ngopi di Warung Kopi pinggir jalan, duduk di pos ronda, atau santai di teras rumah gadang sambil liat chart di tablet.
-       
-       C. SURREAL FANTASY: Metafora luar angkasa atau dunia mimpi. Misal: Berjalan di atas jam raksasa, memetik buah koin di kebun awan, atau bermeditasi di atas air terjun candlestick hijau.
-       
-       D. SLICE OF LIFE: Kegiatan sehari-hari yang jauh dari trading. Misal: Berkebun, memasak, atau main catur di taman, tapi ada elemen trading kecil (misal: celemeknya ada logo "Bull Market").
+       SEMESTA TERPILIH: ${selectedUniverse}
 
-       CATATAN: 
-       - JANGAN terpaku pada Naga atau Surfing terus-menerus. 
-       - Deskripsi harus mendetail tentang pencahayaan (misal: golden hour, neon vibes, atau soft morning light).
-       - Pastikan karakter "Suhu 45 tahun" tetap terlihat dominan dan santai.
+       - Deskripsi harus detail, lucu, dan kaya secara visual agar menarik perhatian.
+       - Pastikan karakter Chibi Suhu terlihat dominan di scene tersebut.
 
     5. BAHASA: Indonesia (Casual/Bro-talk).
   `;
@@ -66,7 +71,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             keyTakeaway: { type: Type.STRING },
             visualDescription: { 
               type: Type.STRING, 
-              description: "Deskripsi adegan visual unik untuk karakter chibi." 
+              description: "Deskripsi adegan visual unik untuk karakter chibi berdasarkan semesta yang dipilih." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -93,7 +98,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
   }
 };
 
-// 2. FUNGSI GENERATE GAMBAR (MESIN PELUKIS)
+// 2. FUNGSI GENERATE GAMBAR (MESIN PELUKIS - TETAP SAMA)
 export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
@@ -114,7 +119,7 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
     
     GAYA: Seni digital profesional ala Pixar, garis tebal playful bersih, shading halus, detail tinggi, komposisi dinamis, pencahayaan hangat sinematik, warna pastel lembut, kedalaman lapangan luas, kualitas master studio, 8k.
     KRITIS: Sertakan teks berbahasa Indonesia tulisan tangan di latar belakang, tanpa typo: "${takeaway}"
-    NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, rambut berantakan, kumis penuh, jambang pipi, wajah anak laki-laki muda, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo.
+    NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, rambut berantakan, kumis penuh, jambang pipi, wajah anak laki-laki muda, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, naga.
   `;
 
   try {
