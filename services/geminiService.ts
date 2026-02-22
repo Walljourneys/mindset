@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GeneratedContent } from "../types";
 
-// Validate API Key presence
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
   console.error("API_KEY is missing from environment variables.");
@@ -14,7 +13,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     throw new Error("API Key is missing. Please check your configuration.");
   }
 
-  const modelId = "gemini-3-flash-preview";
+const modelId = "gemini-3-flash-preview";
   
   const moodDirectives = {
     tamparan: "TONE: Aggressive, direct, 'tough love'. Wake them up from their gambling habits. Use harsh, punchy Indonesian/English.",
@@ -24,8 +23,10 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
+// ... bagian atas file tetap sama ...
+
   const prompt = `
-      You are a Viral Content Strategist for TikTok, Instagram Reels, and YouTube Shorts.
+      You are a Viral Content Strategist and a world-class Creative Art Director.
       Current Persona: ${currentMoodTone}
       Target Audience: Retail traders in Indonesia.
       
@@ -35,8 +36,21 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
       1. STYLE: Use "The Power of Silence". Short, punchy, high-impact sentences.
       2. NARRATIVE: Create an engaging caption with a hook, psychological lesson, and CTA.
       3. VIDEO SCRIPT: Create a 15-20 second script (Hook, Value, CTA) with visual & audio directions.
-      4. LANGUAGE: Indonesian (Casual/Bro-talk).
+      
+      4. VISUAL SCENE (CRITICAL): Your job is to create a visual METAPHOR, not just a scene.
+         - STRICTLY FORBIDDEN: Do NOT describe an office, a trading desk, a library, or any room with multiple monitors. We are bored of these!
+         - GO WILD & FANTASTICAL: Place the Chibi character in an unexpected, non-trading location that metaphorically represents the quote's lesson.
+         - EXAMPLES OF CREATIVE METAPHORS (Do not copy, use as inspiration):
+           - Quote about patience: Chibi is fishing in a small boat on a calm lake, but the "fish" are giant, glowing candlesticks.
+           - Quote about fighting ego: Chibi is a tiny knight fighting a massive, shadowy dragon made of red "LOSS" charts on top of a volcano.
+           - Quote about growth: Chibi is farming in a field, planting seeds that grow into money trees, while pulling weeds labeled "FOMO".
+           - Quote about market chaos: Chibi is a conductor of an orchestra where all the instruments are broken and exploding, with notes flying everywhere.
+         - The description must be detailed, funny, and visually rich.
+
+      5. LANGUAGE: Indonesian (Casual/Bro-talk).
     `;
+
+// ... bagian bawah file tetap sama ...
 
   try {
     const response = await ai.models.generateContent({
@@ -50,6 +64,11 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             narrative: { type: Type.STRING },
             hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
             keyTakeaway: { type: Type.STRING },
+            // FIELD BARU: AI bakal nentuin scene unik di sini
+            visualDescription: { 
+                type: Type.STRING, 
+                description: "Detailed creative scene description for the chibi character." 
+            },
             videoScript: {
               type: Type.ARRAY,
               items: {
@@ -63,7 +82,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
               }
             }
           },
-          required: ["narrative", "hashtags", "keyTakeaway", "videoScript"],
+          required: ["narrative", "hashtags", "keyTakeaway", "visualDescription", "videoScript"],
         },
       },
     });
@@ -75,37 +94,19 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
   }
 };
 
-export const generateTradingVisual = async (takeaway: string, mood: string = 'mentor'): Promise<string | undefined> => {
+// Sekarang fungsi ini dapet input 'visualDescription' dari AI
+export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // 1. Definisikan Skenario Chibi Berdasarkan Mood
-  const chibiScenarios = {
-    tamparan: {
-      environment: "Chaotic office: red IHSG/IDX charts flying, 'LOSS' papers on floor, overturned chairs, spilled coffee on keyboard, flickering 'ERROR' monitors, panicking colleagues falling from chairs.",
-      expression: "Smiling confidently while holding a coffee cup and scrolling on a smartphone, completely ignoring the chaos.",
-      lighting: "Intense cinematic warm lighting with deep red/amber highlights."
-    },
-    stoic: {
-      environment: "Zen minimalist office: single green bonsai tree, clean desk, morning fog outside the window, serene and quiet atmosphere.",
-      expression: "Eyes closed peacefully or looking at the horizon with a calm smile, holding a tea cup, hands in pockets.",
-      lighting: "Soft pastel colors, morning mist, cool blue and white tones."
-    },
-    mentor: {
-      environment: "Classic library: wooden bookshelves, a chalkboard with 'Risk Management' sketches, stacks of trading books, professional setup.",
-      expression: "Wise smile, holding a pointer or book, looking like a helpful teacher in a cozy room.",
-      lighting: "Warm golden library lighting, teal and gold highlights."
-    }
-  };
-
-  const scene = chibiScenarios[mood as keyof typeof chibiScenarios] || chibiScenarios.mentor;
-
-  // 2. Gabungkan Jadi Prompt Chibi Raksasa
+  // Kita kunci karakter utamanya (branding), tapi scene-nya dinamis dari AI
   const imagePrompt = `
     Cute chibi style illustration (Pixar-like digital art).
+    
     MAIN CHARACTER: Small chibi man, large head, tanned skin, messy dark hair, thin beard, wearing sunglasses, rolled-up long-sleeve shirt, dark pants, black belt, watch, casual shoes.
-    ACTION: ${scene.expression}
-    ENVIRONMENT: ${scene.environment}
-    STYLE: Cute semi-anime, thick playful clean lines, smooth shading, high detail, dynamic composition, 8k resolution.
+    
+    DYNAMIC SCENE: ${visualDescription}
+    
+    STYLE: Cute semi-anime, thick playful clean lines, smooth shading, high detail, dynamic composition, 8k resolution, cinematic warm lighting.
     CRITICAL: Include this Indonesian text handwritten in the background: "${takeaway}"
     NEGATIVE PROMPT: realistic, photorealistic, real human proportions, horror, blurry, deformed face, bad anatomy, extra limbs, watermark, logo.
   `;
