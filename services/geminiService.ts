@@ -94,25 +94,36 @@ const modelId = "gemini-3-flash-preview";
   }
 };
 
-// Sekarang fungsi ini dapet input 'visualDescription' dari AI
+// ... import dan fungsi generateTradingNarrative di atas TETAP SAMA ...
+
+// Fungsi Visual dengan Karakter Baru (Mature Version)
 export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // Kita kunci karakter utamanya (branding), tapi scene-nya dinamis dari AI
+  // KITA UPDATE DESKRIPSI KARAKTER DI SINI:
+  const characterDescription = `
+    MAIN CHARACTER: Mature chibi man (representing 45 years old) with a distinguished look, large head, tanned skin. 
+    HAIR: Short, neat side-swept style (sisir pinggir), mostly dark but with distinct grey/silver hair at the temples (sides).
+    FACE: Has a well-groomed salt-and-pepper beard (mixed dark and grey hair), clean-shaven upper lip (no mustache). 
+    ATTIRE: Wearing cool sunglasses, rolled-up long-sleeve shirt, dark pants, black belt, watch, casual shoes.
+  `;
+
+  // Gabungkan jadi prompt raksasa
   const imagePrompt = `
     Cute chibi style illustration (Pixar-like digital art).
     
-    MAIN CHARACTER: Small chibi man, large head, tanned skin, messy dark hair, thin beard, wearing sunglasses, rolled-up long-sleeve shirt, dark pants, black belt, watch, casual shoes.
+    ${characterDescription}
     
     DYNAMIC SCENE: ${visualDescription}
     
     STYLE: Cute semi-anime, thick playful clean lines, smooth shading, high detail, dynamic composition, 8k resolution, cinematic warm lighting.
     CRITICAL: Include this Indonesian text handwritten in the background: "${takeaway}"
-    NEGATIVE PROMPT: realistic, photorealistic, real human proportions, horror, blurry, deformed face, bad anatomy, extra limbs, watermark, logo.
+    NEGATIVE PROMPT: realistic, photorealistic, real human proportions, messy hair, full mustache, young boy face, horror, blurry, deformed face, bad anatomy, extra limbs, watermark, logo.
   `;
 
   try {
     const response = await ai.models.generateContent({
+      // Menggunakan model gambar terbaru
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{ text: imagePrompt }],
