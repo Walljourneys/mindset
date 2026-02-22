@@ -17,44 +17,51 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
   const moodDirectives = {
     tamparan: "TONE: Agresif, langsung, 'tough love'. Sadarkan mereka dari kebiasaan judi. Gunakan bahasa Indonesia yang tegas dan nendang.",
     stoic: "TONE: Tenang, filosofis, fokus pada kontrol internal. Gunakan prinsip Stoic (vibe Marcus Aurelius).",
-    mentor: "TONE: Edukatif, bijak, profesional. Seperti sosok ayah atau senior yang sangat berpengalaman."
+    mentor: "TONE: Edukatif, bijak, profesional. Berbagi pengalaman sebagai sesama trader yang sudah makan asam garam."
   };
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
-  // --- BAGIAN BARU: LOGIKA ACAK SEMESTA (KITA PAKSA AI GANTI KASET) ---
-  const visualUniverses = [
-    "SEMESATA A (MODERN CHILL): Tempatkan Chibi di kantor/ruangan trading yang mewah tapi UNIK (contoh: di dalam kapal selam kaca, di kabin pesawat pribadi, atau di rumah pohon futuristik). Pencahayaan: Neon atau Golden Hour.",
-    "SEMESTA B (LOCAL VIBE INDONESIA): Tempatkan Chibi di suasana lokal yang merakyat. (contoh: di Warung Kopi (Warkop) pinggir jalan, di pos ronda, di tengah sawah terasering, atau di pasar tradisional). Pencahayaan: Alami pagi/sore.",
-    "SEMESTA C (SURREAL METAPHOR): Tempatkan Chibi di dunia mimpi/metafora. (contoh: memancing di danau uang, berkebun menanam koin, atau berjalan di atas jembatan candlestick di atas awan). HINDARI NAGA. Pencahayaan: Magis/Fantasi.",
-    "SEMESTA D (SLICE OF LIFE): Tempatkan Chibi melakukan hobi sehari-hari yang tenang. (contoh: memasak di dapur, bermain catur di taman, atau membaca di perpustakaan kuno). Ada elemen trading kecil tersembunyi. Pencahayaan: Hangat dan nyaman."
+  // --- BAGIAN BARU: ROTASI SKENARIO DINAMIS (Berdasarkan Contoh User) ---
+  const dynamicScenarios = [
+    // Skenario 1: Ketenangan di tengah Kekacauan (Chaos)
+    "SKENARIO A (The Eye of the Storm): Karakter utama TENANG minum kopi/scroll HP di tengah kantor/warkop yang KACAU BALAU saat market crash. Wajib ada karakter figuran lain yang panik (jatuh dari kursi, menangis liat layar merah, kertas chart berterbangan). Kontras antara si tenang dan si panik.",
+    
+    // Skenario 2: Jebakan FOMO Masal (The Herd)
+    "SKENARIO B (The FOMO Trap): Sekerumunan besar trader chibi berlarian mengejar 'lilin hijau raksasa' atau 'koin emas terbang' yang menjebak. Karakter utama BERDIRI DIAM di pinggir, hanya menggelengkan kepala atau menahan temannya yang mau ikut lari. Suasana pasar yang riuh dan irasional.",
+    
+    // Skenario 3: Realita Pahit Bersama (Shared Struggle)
+    "SKENARIO C (The Late Night Grind): Suasana malam yang lelah (misal di pos ronda atau kamar berantakan). Karakter utama dan 1-2 teman trader lain duduk lesu menatap layar laptop kecil yang merah, makan mie instan dengan wajah capek tapi pasrah. Vibe solidaritas dalam kerugian.",
+    
+    // Skenario 4: Edukasi Santai (Peer-to-Peer)
+    "SKENARIO D (The Simple Explanation): Karakter utama sedang santai menjelaskan sesuatu (menunjuk chart sederhana di tablet) kepada teman trader lain (misal wanita berhijab atau bapak-bapak) yang terlihat bingung/garuk kepala. Setting di kafe atau taman yang tenang."
   ];
 
-  // Pilih satu semesta secara acak lewat kode
-  const selectedUniverse = visualUniverses[Math.floor(Math.random() * visualUniverses.length)];
+  // Pilih satu skenario secara acak
+  const selectedScenario = dynamicScenarios[Math.floor(Math.random() * dynamicScenarios.length)];
   // -------------------------------------------------------------------
 
   const prompt = `
-    Kamu adalah Strategi Konten Viral dan Creative Art Director kelas dunia.
+    Kamu adalah Strategi Konten Viral dan Creative Art Director.
     Persona Saat Ini: ${currentMoodTone}
-    Target Audiens: Trader retail di Indonesia (Saham, Crypto, atau Forex).
+    Target Audiens: Trader retail di Indonesia (Saham, Crypto, Forex) - posisikan diri sebagai teman seperjuangan yang berpengalaman.
     
     Tugas: Ubah pemikiran ini: "${quote}" menjadi paket konten viral lengkap dalam format JSON.
 
     Panduan:
-    1. GAYA: Gunakan "Kekuatan Diam". Kalimat pendek, nendang, dampak tinggi.
-    2. NARASI: Buat caption menarik dengan hook, pelajaran psikologi, dan CTA.
-    3. SKRIP VIDEO: Buat script 15-20 detik (Hook, Value, CTA) dengan arahan visual & audio.
+    1. GAYA: Bahasa Indonesia sehari-hari (relatable), tajam, tidak menggurui tapi menyadarkan.
+    2. NARASI: Caption menarik dengan hook kuat dan pelajaran psikologi market.
     
-    4. ADEGAN VISUAL (KRITIS - WAJIB IKUTI): 
-       Tugasmu adalah membuat deskripsi visual yang unik berdasarkan "SEMESTA" yang terpilih di bawah ini.
+    3. ADEGAN VISUAL (KRITIS - WAJIB IKUTI): 
+       Tugasmu adalah membuat deskripsi visual yang SANGAT DETAIL dan HIDUP berdasarkan skenario terpilih di bawah ini. 
+       JANGAN biarkan karakter utama sendirian. Harus ada interaksi atau kekacauan di sekitarnya.
        
-       SEMESTA TERPILIH: ${selectedUniverse}
+       SKENARIO TERPILIH: ${selectedScenario}
 
-       - Deskripsi harus detail, lucu, dan kaya secara visual agar menarik perhatian.
-       - Pastikan karakter Chibi terlihat dominan di scene tersebut.
+       - Deskripsi harus kaya secara visual: sebutkan ekspresi karakter pendukung, benda-benda yang berantakan, dan pencahayaan.
+       - Pastikan Karakter Utama (pria 45 tahun) menjadi pusat perhatian karena ketenangannya atau tindakannya yang berbeda dari massa.
 
-    5. BAHASA: Indonesia (Casual/Bro-talk).
+    4. BAHASA: Indonesia.
   `;
 
   try {
@@ -71,7 +78,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             keyTakeaway: { type: Type.STRING },
             visualDescription: { 
               type: Type.STRING, 
-              description: "Deskripsi adegan visual unik untuk karakter chibi berdasarkan semesta yang dipilih." 
+              description: "Deskripsi adegan visual yang detail, ramai, dan dinamis berdasarkan skenario." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -98,28 +105,30 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
   }
 };
 
-// 2. FUNGSI GENERATE GAMBAR (MESIN PELUKIS - TETAP SAMA)
+// 2. FUNGSI GENERATE GAMBAR (MESIN PELUKIS)
 export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // KARAKTER UTAMA: Representasi Suhu (45 Tahun)
+  // KARAKTER UTAMA: Representasi User (Teman Seperjuangan)
   const characterDescription = `
-    KARAKTER UTAMA: Pria chibi dewasa (usia 45 tahun) dengan penampilan terhormat, kepala besar, kulit kecokelatan. 
-    RAMBUT: Pendek, rapi bergaya sisir pinggir (side-swept), sebagian besar gelap tapi dengan rambut abu-abu/perak yang jelas di pelipis (sides).
-    WAJAH: Memiliki jenggot beruban di dagu (salt-and-pepper), TIDAK ada kumis (no mustache), TIDAK ada jambang di pipi. 
-    PAKAIAN: Memakai kacamata hitam keren, jam tangan, pakaian kasual profesional (seperti kemeja lengan panjang digulung).
+    KARAKTER UTAMA: Pria chibi dewasa (usia sekitar 45 tahun) dengan penampilan santai tapi rapi.
+    RAMBUT: Pendek, gaya sisir pinggir, ada uban/perak jelas di bagian pelipis (sides).
+    WAJAH: Ada jenggot tipis beruban di dagu (salt-and-pepper), tanpa kumis. Ekspresi tenang dan percaya diri.
+    PAKAIAN: Kacamata hitam, kemeja lengan panjang digulung kasual, jam tangan. Postur santai.
   `;
 
   const imagePrompt = `
-    Ilustrasi gaya chibi lucu (seni digital mirip Pixar).
+    Ilustrasi gaya chibi lucu (seni digital profesional ala Pixar), komposisi dinamis dan ramai.
     
-    ${characterDescription}
+    INTI ADEGAN: ${visualDescription}
     
-    ADEGAN DINAMIS: ${visualDescription}
+    DETAIL KARAKTER UTAMA (Pastikan dia ada di tengah adegan ini): ${characterDescription}
     
-    GAYA: Kartun chibi lucu semi-anime, seni digital profesional ala Pixar, garis tebal playful bersih, shading halus, detail tinggi, komposisi dinamis, pencahayaan hangat sinematik, warna pastel lembut, kedalaman lapangan luas, kualitas master studio, 8k.
-    KRITIS: Sertakan teks berbahasa Indonesia tulisan tangan di latar belakang, tanpa typo: "${takeaway}"
-    NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, rambut berantakan, kumis penuh, jambang pipi, wajah anak laki-laki muda, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, naga.
+    ATMOSFER: Pencahayaan hangat sinematik, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable.
+    
+    KRITIS: Sertakan teks tulisan tangan berbahasa Indonesia di latar belakang (misal di tembok atau papan), isinya: "${takeaway}"
+    
+    NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, teks rusak, sepi, kosong.
   `;
 
   try {
