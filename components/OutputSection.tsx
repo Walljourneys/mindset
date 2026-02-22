@@ -8,7 +8,8 @@ import {
   Hash, 
   Clapperboard, 
   Mic, 
-  Video 
+  Video,
+  Share2 
 } from 'lucide-react';
 import { GeneratedContent } from '../types';
 
@@ -20,10 +21,16 @@ interface OutputSectionProps {
 
 const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, isImageLoading }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [isScriptCopied, setIsScriptCopied] = useState(false);
 
-  // FUNGSI COPY CAPTION & HASHTAG
+  // 1. FUNGSI COPY CAPTION & HASHTAG
   const handleCopy = async () => {
-    const textToCopy = `${data.narrative}\n\n${data.hashtags.join(' ')}`;
+    const formattedHashtags = data.hashtags
+      .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
+      .join(' ');
+      
+    const textToCopy = `${data.narrative}\n\n${formattedHashtags}`;
+    
     try {
       await navigator.clipboard.writeText(textToCopy);
       setIsCopied(true);
@@ -33,7 +40,24 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // FUNGSI DOWNLOAD GAMBAR
+  // 2. FUNGSI COPY KHUSUS SCRIPT VIDEO (Untuk AI Video Generator)
+  const handleCopyScript = async () => {
+    if (!data.videoScript) return;
+
+    const formattedScript = data.videoScript
+      .map(s => `PART: ${s.part.toUpperCase()}\nVisual Direction: ${s.visual}\nAudio/Voice Over: "${s.audio}"`)
+      .join('\n\n---\n\n');
+
+    try {
+      await navigator.clipboard.writeText(formattedScript);
+      setIsScriptCopied(true);
+      setTimeout(() => setIsScriptCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy script: ', err);
+    }
+  };
+
+  // 3. FUNGSI DOWNLOAD GAMBAR
   const handleDownloadImage = () => {
     if (!data.imageUrl) return;
     const link = document.createElement('a');
@@ -51,7 +75,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
         {/* KOLOM KIRI: TEKS & SCRIPT */}
         <div className="p-8 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-700 relative">
           
-          {/* Section: Key Takeaway */}
           <div className="mb-8">
             <h3 className="text-sm font-bold text-trading-green uppercase tracking-widest flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4" />
@@ -63,7 +86,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
           </div>
 
           <div className="space-y-8 flex-grow">
-            {/* Section: Narrative */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Share2 className="w-3 h-3" /> Narrative Caption
@@ -73,7 +95,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               </div>
             </div>
 
-            {/* Section: Hashtags */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
                 <Hash className="w-3 h-3" /> Viral Tags
@@ -81,18 +102,32 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
               <div className="flex flex-wrap gap-2">
                 {data.hashtags.map((tag, index) => (
                   <span key={index} className="text-xs font-bold text-blue-400 bg-blue-900/30 px-3 py-1.5 rounded-lg border border-blue-500/20">
-                    {tag}
+                    {tag.startsWith('#') ? tag : `#${tag}`}
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* NEW SECTION: SHORT VIDEO SCRIPT */}
+            {/* SECTION: SHORT VIDEO SCRIPT */}
             <div className="pt-8 border-t border-gray-700/50">
-              <h3 className="text-sm font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2 mb-5">
-                <Clapperboard className="w-4 h-4" />
-                Short Video Script (15-20s)
-              </h3>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-sm font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2">
+                  <Clapperboard className="w-4 h-4" />
+                  Short Video Script
+                </h3>
+                {/* TOMBOL COPY SCRIPT BARU */}
+                <button 
+                  onClick={handleCopyScript}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all
+                    ${isScriptCopied 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-orange-500/10 text-orange-400 border border-orange-500/20 hover:bg-orange-500/20'}`}
+                >
+                  {isScriptCopied ? <CheckCircle size={12} /> : <Copy size={12} />}
+                  {isScriptCopied ? 'Script Copied' : 'Copy Script for AI'}
+                </button>
+              </div>
+
               <div className="space-y-4">
                 {data.videoScript?.map((step, idx) => (
                   <div key={idx} className="group bg-gray-900/50 rounded-2xl p-5 border border-white/5 hover:border-orange-500/30 transition-all duration-300">
@@ -102,14 +137,14 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
                       </span>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex gap-3 items-start group-hover:translate-x-1 transition-transform">
+                      <div className="flex gap-3 items-start">
                         <Video className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                         <p className="text-xs text-gray-400 leading-snug">
                           <span className="text-gray-500 font-bold uppercase mr-1">Visual:</span>
                           {step.visual}
                         </p>
                       </div>
-                      <div className="flex gap-3 items-start group-hover:translate-x-1 transition-transform">
+                      <div className="flex gap-3 items-start">
                         <Mic className="w-4 h-4 text-trading-green mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-white font-bold leading-normal">
                           "{step.audio}"
@@ -122,17 +157,15 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
             </div>
           </div>
 
-          {/* BUTTON COPY */}
           <button
             onClick={handleCopy}
             className={`mt-10 w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black uppercase tracking-widest transition-all duration-300 shadow-xl
               ${isCopied 
-                ? 'bg-green-600 text-white shadow-green-900/40 scale-[0.98]' 
-                : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 hover:from-gray-600 hover:to-gray-700 border border-white/10'
-              }`}
+                ? 'bg-green-600 text-white shadow-green-900/40' 
+                : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 border border-white/10'}`}
           >
-            {isCopied ? <CheckCircle className="w-5 h-5 animate-pulse" /> : <Copy className="w-5 h-5" />}
-            {isCopied ? 'Copied to Clipboard' : 'Copy All Text'}
+            {isCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+            {isCopied ? 'Caption Tersalin' : 'Copy Full Caption'}
           </button>
         </div>
 
@@ -144,8 +177,6 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
             </h3>
 
             <div className="w-full max-w-[320px] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-[6px] border-gray-800 group">
-              
-              {/* STATE 1: LOADING */}
               {isImageLoading && (
                 <div className="w-full aspect-[9/16] bg-gray-800 animate-pulse flex flex-col items-center justify-center gap-4">
                   <div className="relative">
@@ -156,48 +187,31 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
                 </div>
               )}
 
-              {/* STATE 2: READY */}
               {!isImageLoading && data.imageUrl && (
                 <>
-                  <img 
-                    src={data.imageUrl} 
-                    alt="Trading Visual" 
-                    className="w-full aspect-[9/16] object-cover transition-transform duration-1000 group-hover:scale-110" 
-                  />
+                  <img src={data.imageUrl} className="w-full aspect-[9/16] object-cover transition-transform duration-1000 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-end pb-10 px-6">
-                    <button
-                      onClick={handleDownloadImage}
-                      className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-2xl font-black uppercase tracking-tighter shadow-2xl hover:bg-trading-green hover:text-black transition-colors transform translate-y-4 group-hover:translate-y-0 duration-500"
-                    >
-                      <Download className="w-5 h-5" />
-                      Download 8K PNG
+                    <button onClick={handleDownloadImage} className="w-full flex items-center justify-center gap-2 bg-white text-black py-4 rounded-2xl font-black uppercase tracking-tighter shadow-2xl hover:bg-trading-green transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">
+                      <Download className="w-5 h-5" /> Download 8K PNG
                     </button>
                   </div>
                 </>
               )}
 
-              {/* STATE 3: IDLE */}
               {!isImageLoading && !data.imageUrl && (
                 <div className="w-full aspect-[9/16] bg-gray-800/50 flex items-center justify-center p-8 text-center">
-                  <button
-                    onClick={onGenerateVisual}
-                    className="group/btn flex flex-col items-center gap-6"
-                  >
-                    <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center shadow-2xl group-hover/btn:bg-trading-green group-hover/btn:text-black transition-all duration-500 group-hover/btn:scale-110">
+                  <button onClick={onGenerateVisual} className="group/btn flex flex-col items-center gap-6">
+                    <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center shadow-2xl group-hover/btn:bg-trading-green group-hover/btn:text-black transition-all duration-500">
                       <ImageIcon className="w-8 h-8" />
                     </div>
                     <div className="space-y-2">
                       <span className="block font-black text-white uppercase tracking-widest text-sm">Generate Visual</span>
-                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-tight">AI will create 9:16 Cinematic Art</span>
                     </div>
                   </button>
                 </div>
               )}
             </div>
-            
-            <p className="mt-8 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">
-              Designed for Instagram & TikTok Stories
-            </p>
+            <p className="mt-8 text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Designed for Instagram & TikTok Stories</p>
           </div>
         </div>
 
@@ -205,8 +219,5 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     </div>
   );
 };
-
-// Pastikan import 'Share2' sudah ada di barisan lucide-react bro!
-import { Share2 } from 'lucide-react'; 
 
 export default OutputSection;
