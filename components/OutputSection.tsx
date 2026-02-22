@@ -57,7 +57,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
     }
   };
 
-  // 3. FUNGSI DOWNLOAD: ANTI-TYPO + WATERMARK (CANVAS ENGINE)
+  // 3. FUNGSI DOWNLOAD: FIXED FONT & POSITION (ANTI-BLOCKING)
   const handleDownloadImage = () => {
     if (!data.imageUrl) return;
 
@@ -76,19 +76,20 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       // a. Gambar foto asli dari AI
       ctx.drawImage(img, 0, 0);
 
-      // b. Setting Core Message (Anti-Typo)
-      const text = data.keyTakeaway.toUpperCase(); 
+      // b. Setting Core Message (Anti-Typo & Handwriting Style)
+      const text = data.keyTakeaway; // Tidak pakai toUpperCase biar lebih alami
       const padding = canvas.width * 0.08;
       const maxWidth = canvas.width - (padding * 2);
-      const fontSize = Math.floor(canvas.width * 0.055); 
-      
-      ctx.font = `900 ${fontSize}px sans-serif`;
+
+      // --- PERBAIKAN: Font lebih kecil & gaya tulisan tangan ---
+      const fontSize = Math.floor(canvas.width * 0.042); 
+      ctx.font = `bold ${fontSize}px "Comic Sans MS", "Marker Felt", cursive, sans-serif`;
       ctx.textAlign = "center";
       
       const words = text.split(' ');
       let line = '';
       const lines = [];
-      const lineHeight = fontSize * 1.25;
+      const lineHeight = fontSize * 1.3;
 
       for (let n = 0; n < words.length; n++) {
         let testLine = line + words[n] + ' ';
@@ -102,17 +103,20 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       }
       lines.push(line);
 
-      let y = canvas.height * 0.15;
+      // --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
+      let y = canvas.height * 0.12; 
 
-      // Background Box Hitam (Readability)
-      const boxHeight = lines.length * lineHeight + padding;
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(padding / 2, y - fontSize - (padding/4), canvas.width - padding, boxHeight);
+      // Background Box Hitam (Lebih smooth)
+      const boxHeight = lines.length * lineHeight + (padding/2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.roundRect ? 
+        ctx.beginPath() || ctx.roundRect(padding/2, y - fontSize - 10, canvas.width - padding, boxHeight, 20) || ctx.fill() :
+        ctx.fillRect(padding/2, y - fontSize - 10, canvas.width - padding, boxHeight);
 
       // Cetak Teks Utama
       ctx.fillStyle = "#ffffff";
       ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 8;
       
       lines.forEach((l) => {
         ctx.fillText(l.trim(), canvas.width / 2, y);
@@ -121,8 +125,8 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
 
       // c. Cetak Watermark (Branding)
       ctx.shadowBlur = 0; 
-      ctx.font = `bold ${fontSize * 0.5}px sans-serif`;
-      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.font = `bold ${fontSize * 0.6}px sans-serif`;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
       ctx.textAlign = "right";
       const margin = canvas.width * 0.05;
       ctx.fillText("© WALL JOURNEY", canvas.width - margin, canvas.height - margin);
@@ -131,7 +135,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       const finalImage = canvas.toDataURL("image/png");
       const link = document.createElement('a');
       link.href = finalImage;
-      link.download = `WallJourney-${Date.now()}.png`;
+      link.download = `WallJourney-Story-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -185,7 +189,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
                   : 'bg-gradient-to-r from-gray-700 to-gray-800 text-gray-200 hover:from-gray-600 hover:to-gray-700 border border-white/10'}`}
             >
               {isCopied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-              {isCopied ? 'All Text Copied!' : 'Copy Full Caption (Inc. Core Message)'}
+              {isCopied ? 'All Text Copied!' : 'Copy Full Caption'}
             </button>
 
             <div className="pt-8 border-t border-gray-700/50">
