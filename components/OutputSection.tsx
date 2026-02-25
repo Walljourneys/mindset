@@ -83,7 +83,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
 
       // --- PERBAIKAN: Font lebih kecil & gaya tulisan tangan ---
       const fontSize = Math.floor(canvas.width * 0.042); 
-      ctx.font = `bold ${fontSize}px "Comic Sans MS", "Marker Felt", cursive, sans-serif`;
+      ctx.font = `bold ${fontSize}px "Marker Felt", sans-serif`;
       ctx.textAlign = "center";
       
       const words = text.split(' ');
