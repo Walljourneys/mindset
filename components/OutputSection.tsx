@@ -103,15 +103,20 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       }
       lines.push(line);
 
-      // --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
-      let y = canvas.height * 0.12; 
+// --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
+      let y = canvas.height * 0.10; 
 
       // Background Box Hitam (Lebih smooth)
       const boxHeight = lines.length * lineHeight + (padding/2);
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-      ctx.roundRect ? 
-        ctx.beginPath() || ctx.roundRect(padding/2, y - fontSize - 10, canvas.width - padding, boxHeight, 20) || ctx.fill() :
+
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(padding/2, y - fontSize - 10, canvas.width - padding, boxHeight, 20);
+        ctx.fill();
+      } else {
         ctx.fillRect(padding/2, y - fontSize - 10, canvas.width - padding, boxHeight);
+      }
 
       // Cetak Teks Utama
       ctx.fillStyle = "#ffffff";
