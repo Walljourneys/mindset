@@ -38,13 +38,13 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     2. ADEGAN VISUAL (KREATIVITAS BEBAS & IMPROVISASI): 
        Evaluasi makna inti dari "${quote}". Lalu, CIPTAKAN SATU adegan visual yang unik, out-of-the-box, dan tidak klise untuk merepresentasikan makna tersebut. Biarkan imajinasimu liar!
        
-       ATURAN WAJIB DALAM ADEGAN:
-       - SETTING LOKASI BEBAS TAPI SPESIFIK: Bisa di KRL yang penuh sesak, warteg, pos ronda, pinggir jalan macet, atau di tengah badai. Sesuaikan dengan mood quote.
-       - JANGAN SENDIRIAN: Karakter utama TIDAK BOLEH sendirian. Wajib hadirkan karakter pendukung/figuran yang sedang berinteraksi, panik, pamer, menangis, atau melakukan hal konyol di sekitarnya sebagai kontras.
+        ATURAN WAJIB DALAM ADEGAN:
+       - SETTING LOKASI BEBAS: Wajib eksplorasi lokasi, waktu (pagi/siang/sore/malam), dan cuaca (cerah/berawan/panas terik/dll) yang berbeda-beda. Sesuaikan murni dengan mood quote. Jangan terpaku pada satu cuaca atau tempat.
+       - JANGAN SENDIRIAN: Karakter utama TIDAK BOLEH sendirian. Wajib hadirkan karakter pendukung/figuran yang sedang berinteraksi di sekitarnya sebagai kontras.
        - FOKUS UTAMA: Karakter Utama (pria 45 tahun) harus tetap menjadi pusat perhatian (entah dia yang paling tenang, paling bijak, atau memimpin aksi).
-       - HUMOR LOKAL & RELATABLE: Masukkan detail khas Indonesia (misal: kaleng biskuit isi rengginang, abang ojol neduh, kucing kampung rebahan di atas keyboard, spanduk pecel lele, dll).
-       - Deskripsikan semuanya dengan SANGAT DETAIL (pencahayaan, ekspresi wajah, barang-barang yang berserakan).
-
+       - HUMOR LOKAL & RELATABLE: Masukkan detail suasana atau objek khas Indonesia. Wajib improvisasi benda-benda yang berbeda di setiap adegan (JANGAN mengulang objek yang sama).
+       - DESKRIPSI DETAIL: Jelaskan pencahayaan, ekspresi wajah, dan kondisi sekitar (apakah rapi atau berantakan) secara spesifik hasil dari improvisasi.
+       
     3. BAHASA: Indonesia.
   `;
 
