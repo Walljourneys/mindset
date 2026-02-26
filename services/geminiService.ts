@@ -38,12 +38,11 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     2. ADEGAN VISUAL (KREATIVITAS BEBAS & IMPROVISASI): 
        Evaluasi makna inti dari "${quote}". Lalu, CIPTAKAN SATU adegan visual yang unik, out-of-the-box, dan tidak klise untuk merepresentasikan makna tersebut. Biarkan imajinasimu liar!
        
-        ATURAN WAJIB DALAM ADEGAN:
-       - SETTING LOKASI BEBAS: Wajib eksplorasi lokasi, waktu (pagi/siang/sore/malam), dan cuaca (cerah/berawan/panas terik/dll) yang berbeda-beda. Sesuaikan murni dengan mood quote. Jangan terpaku pada satu cuaca atau tempat.
-       - JANGAN SENDIRIAN: Karakter utama TIDAK BOLEH sendirian. Wajib hadirkan karakter pendukung/figuran yang sedang berinteraksi di sekitarnya sebagai kontras.
-       - FOKUS UTAMA: Karakter Utama (pria 45 tahun) harus tetap menjadi pusat perhatian (entah dia yang paling tenang, paling bijak, atau memimpin aksi).
-       - HUMOR LOKAL & RELATABLE: Masukkan detail suasana atau objek khas Indonesia. Wajib improvisasi benda-benda yang berbeda di setiap adegan (JANGAN mengulang objek yang sama).
-       - DESKRIPSI DETAIL: Jelaskan pencahayaan, ekspresi wajah, dan kondisi sekitar (apakah rapi atau berantakan) secara spesifik hasil dari improvisasi.
+       PANDUAN VISUAL (BEBASKAN IMAJINASI): 
+        - LOKASI & SUASANA: Improvisasilah secara total. Pilih setting (outdoor/indoor), waktu, dan cuaca yang paling dramatis untuk mendukung quote ini. Jangan ada pengulangan tema dari adegan sebelumnya.
+        - DINAMIKA KARAKTER: Karakter utama (pria 45 tahun) tidak boleh sendirian. Harus ada interaksi atau kehadiran figur-figur lain di sekitarnya yang memperkuat kontras pesan (misal: orang lain sibuk, panik, santai, atau sedang bekerja).
+        - DETAIL LOKAL: Masukkan satu atau dua elemen visual khas Indonesia yang unik dan tidak terduga. Hindari penggunaan objek yang itu-itu saja.
+        - EKSPRESI & CAHAYA: Deskripsikan dengan sangat detail bagaimana cahaya jatuh di adegan tersebut dan apa yang tersirat dari wajah setiap orang di sana.
        
     3. BAHASA: Indonesia.
   `;
