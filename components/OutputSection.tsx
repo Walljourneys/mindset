@@ -104,7 +104,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       lines.push(line);
 
 // --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
-      let y = canvas.height * 0.10; 
+      let y = canvas.height * 0.05; 
 
       // Background Box Hitam (Lebih smooth)
       const boxHeight = lines.length * lineHeight + (padding/2);

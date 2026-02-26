@@ -22,34 +22,30 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
-  // --- LOGIC BARU: SKENARIO DINAMIS DIKERJAKAN OLEH AI ---
+  // --- LOGIC BARU: FULL IMPROVISASI AI BERDASARKAN MAKNA QUOTE ---
   const prompt = `
     Kamu adalah Strategi Konten Viral dan Creative Art Director.
     Persona Saat Ini: ${currentMoodTone}
-    Target Audiens: Trader retail di Indonesia (Saham, Crypto, Forex) - posisikan diri sebagai teman seperjuangan yang berpengalaman.
+    Target Audiens: Trader retail di Indonesia (Saham, Crypto, Forex).
     
     TUGAS UTAMA: 
-    Ubah pemikiran ini: "${quote}" menjadi paket konten viral lengkap dalam format JSON. 
-    Sekaligus, rancang adegan visual yang SANGAT RELEVAN secara emosional dan logika dengan makna di balik quote tersebut.
+    Ubah pemikiran ini: "${quote}" menjadi paket konten viral (JSON) dengan narasi yang kuat.
+    Sekaligus, rancang adegan visual yang SANGAT RELEVAN secara emosional dengan makna di balik quote tersebut.
 
     Panduan:
-    1. GAYA: Bahasa Indonesia sehari-hari (relatable), tajam, tidak menggurui tapi menyadarkan.
-    2. NARASI: Caption menarik dengan hook kuat dan pelajaran psikologi market.
+    1. GAYA NARASI: Bahasa Indonesia sehari-hari (relatable), tajam, tidak menggurui tapi menyadarkan.
     
-    3. ADEGAN VISUAL (KRITIS - WAJIB IKUTI): 
-       Evaluasi makna dari "${quote}" dan buat/pilih skenario visual yang paling pas. Contoh referensi arah adegan:
-       - CHAOS CONTROL: Karakter Utama tenang saat market crash, sementara figuran lain panik histeris. (Cocok untuk quote Sabar/Psikologi).
-       - THE HERD: Karakter Utama diam melihat kerumunan trader FOMO lari mengejar koin terbang/lilin hijau. (Cocok untuk quote Disiplin/Anti-FOMO).
-       - SHARED STRUGGLE: Duduk lesu makan mie instan bersama teman di depan monitor merah. (Cocok untuk quote Loss/Belajar/Realita).
-       - THE TEACHER: Karakter Utama santai menjelaskan chart sederhana ke trader yang bingung di warkop/kafe. (Cocok untuk quote Tips/Strategi).
+    2. ADEGAN VISUAL (KREATIVITAS BEBAS & IMPROVISASI): 
+       Evaluasi makna inti dari "${quote}". Lalu, CIPTAKAN SATU adegan visual yang unik, out-of-the-box, dan tidak klise untuk merepresentasikan makna tersebut. Biarkan imajinasimu liar!
+       
+       ATURAN WAJIB DALAM ADEGAN:
+       - SETTING LOKASI BEBAS TAPI SPESIFIK: Bisa di KRL yang penuh sesak, warteg, pos ronda, pinggir jalan macet, atau di tengah badai. Sesuaikan dengan mood quote.
+       - JANGAN SENDIRIAN: Karakter utama TIDAK BOLEH sendirian. Wajib hadirkan karakter pendukung/figuran yang sedang berinteraksi, panik, pamer, menangis, atau melakukan hal konyol di sekitarnya sebagai kontras.
+       - FOKUS UTAMA: Karakter Utama (pria 45 tahun) harus tetap menjadi pusat perhatian (entah dia yang paling tenang, paling bijak, atau memimpin aksi).
+       - HUMOR LOKAL & RELATABLE: Masukkan detail khas Indonesia (misal: kaleng biskuit isi rengginang, abang ojol neduh, kucing kampung rebahan di atas keyboard, spanduk pecel lele, dll).
+       - Deskripsikan semuanya dengan SANGAT DETAIL (pencahayaan, ekspresi wajah, barang-barang yang berserakan).
 
-       DETAIL VISUAL:
-       - Deskripsi harus kaya secara visual: sebutkan ekspresi karakter pendukung, benda-benda yang berantakan, dan pencahayaan.
-       - JANGAN biarkan karakter utama sendirian. Harus ada interaksi atau kekacauan di sekitarnya.
-       - Pastikan Karakter Utama (pria 45 tahun) menjadi pusat perhatian karena ketenangannya atau tindakannya yang berbeda dari massa.
-       - TAMBAHKAN HUMOR LOKAL: Misal, ada abang tukang kopi keliling/bakso yang ikutan melongo lihat chart merah, atau kucing kampung numpang tidur di atas laptop.
-
-    4. BAHASA: Indonesia.
+    3. BAHASA: Indonesia.
   `;
 
   try {
@@ -66,7 +62,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             keyTakeaway: { type: Type.STRING },
             visualDescription: { 
               type: Type.STRING, 
-              description: "Deskripsi adegan visual yang detail, ramai, dinamis, dan memiliki unsur humor lokal/relatable, disesuaikan dengan makna narasi." 
+              description: "Deskripsi adegan visual hasil improvisasi bebas AI, sangat detail, ramai, dan penuh elemen lokal, disesuaikan murni dengan makna quote." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -108,11 +104,11 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
   const imagePrompt = `
     Ilustrasi gaya chibi lucu (seni digital profesional ala Pixar), komposisi dinamis dan ramai.
     
-    INTI ADEGAN: ${visualDescription}
+    INTI ADEGAN (TERJEMAHKAN DENGAN IMAJINASI TINGGI): ${visualDescription}
     
     DETAIL KARAKTER UTAMA (Pastikan dia ada di tengah adegan ini): ${characterDescription}
     
-    ATMOSFER: Pencahayaan hangat sinematik, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable dengan budaya lokal.
+    ATMOSFER: Pencahayaan dramatis atau sinematik sesuai mood adegan, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable dengan budaya lokal Indonesia.
     
     NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, teks rusak, sepi, kosong.
   `;
