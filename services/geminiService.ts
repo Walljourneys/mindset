@@ -22,44 +22,32 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
 
   const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
 
-  // --- BAGIAN BARU: ROTASI SKENARIO DINAMIS (Berdasarkan Contoh User) ---
-  const dynamicScenarios = [
-    // Skenario 1: Ketenangan di tengah Kekacauan (Chaos)
-    "SKENARIO A (The Eye of the Storm): Karakter utama TENANG minum kopi/scroll HP di tengah kantor/warkop yang KACAU BALAU saat market crash. Wajib ada karakter figuran lain yang panik (jatuh dari kursi, menangis liat layar merah, kertas chart berterbangan). Kontras antara si tenang dan si panik.",
-    
-    // Skenario 2: Jebakan FOMO Masal (The Herd)
-    "SKENARIO B (The FOMO Trap): Sekerumunan besar trader chibi berlarian mengejar 'lilin hijau raksasa' atau 'koin emas terbang' yang menjebak. Karakter utama BERDIRI DIAM di pinggir, hanya menggelengkan kepala atau menahan temannya yang mau ikut lari. Suasana pasar yang riuh dan irasional.",
-    
-    // Skenario 3: Realita Pahit Bersama (Shared Struggle)
-    "SKENARIO C (The Late Night Grind): Suasana malam yang lelah (misal di pos ronda atau kamar berantakan). Karakter utama dan 1-2 teman trader lain duduk lesu menatap layar laptop kecil yang merah, makan mie instan dengan wajah capek tapi pasrah. Vibe solidaritas dalam kerugian.",
-    
-    // Skenario 4: Edukasi Santai (Peer-to-Peer)
-    "SKENARIO D (The Simple Explanation): Karakter utama sedang santai menjelaskan sesuatu (menunjuk chart sederhana di tablet) kepada teman trader lain (misal wanita berhijab atau bapak-bapak) yang terlihat bingung/garuk kepala. Setting di kafe atau taman yang tenang."
-  ];
-
-  // Pilih satu skenario secara acak
-  const selectedScenario = dynamicScenarios[Math.floor(Math.random() * dynamicScenarios.length)];
-  // -------------------------------------------------------------------
-
+  // --- LOGIC BARU: SKENARIO DINAMIS DIKERJAKAN OLEH AI ---
   const prompt = `
     Kamu adalah Strategi Konten Viral dan Creative Art Director.
     Persona Saat Ini: ${currentMoodTone}
     Target Audiens: Trader retail di Indonesia (Saham, Crypto, Forex) - posisikan diri sebagai teman seperjuangan yang berpengalaman.
     
-    Tugas: Ubah pemikiran ini: "${quote}" menjadi paket konten viral lengkap dalam format JSON.
+    TUGAS UTAMA: 
+    Ubah pemikiran ini: "${quote}" menjadi paket konten viral lengkap dalam format JSON. 
+    Sekaligus, rancang adegan visual yang SANGAT RELEVAN secara emosional dan logika dengan makna di balik quote tersebut.
 
     Panduan:
     1. GAYA: Bahasa Indonesia sehari-hari (relatable), tajam, tidak menggurui tapi menyadarkan.
     2. NARASI: Caption menarik dengan hook kuat dan pelajaran psikologi market.
     
     3. ADEGAN VISUAL (KRITIS - WAJIB IKUTI): 
-       Tugasmu adalah membuat deskripsi visual yang SANGAT DETAIL dan HIDUP berdasarkan skenario terpilih di bawah ini. 
-       JANGAN biarkan karakter utama sendirian. Harus ada interaksi atau kekacauan di sekitarnya.
-       
-       SKENARIO TERPILIH: ${selectedScenario}
+       Evaluasi makna dari "${quote}" dan buat/pilih skenario visual yang paling pas. Contoh referensi arah adegan:
+       - CHAOS CONTROL: Karakter Utama tenang saat market crash, sementara figuran lain panik histeris. (Cocok untuk quote Sabar/Psikologi).
+       - THE HERD: Karakter Utama diam melihat kerumunan trader FOMO lari mengejar koin terbang/lilin hijau. (Cocok untuk quote Disiplin/Anti-FOMO).
+       - SHARED STRUGGLE: Duduk lesu makan mie instan bersama teman di depan monitor merah. (Cocok untuk quote Loss/Belajar/Realita).
+       - THE TEACHER: Karakter Utama santai menjelaskan chart sederhana ke trader yang bingung di warkop/kafe. (Cocok untuk quote Tips/Strategi).
 
+       DETAIL VISUAL:
        - Deskripsi harus kaya secara visual: sebutkan ekspresi karakter pendukung, benda-benda yang berantakan, dan pencahayaan.
+       - JANGAN biarkan karakter utama sendirian. Harus ada interaksi atau kekacauan di sekitarnya.
        - Pastikan Karakter Utama (pria 45 tahun) menjadi pusat perhatian karena ketenangannya atau tindakannya yang berbeda dari massa.
+       - TAMBAHKAN HUMOR LOKAL: Misal, ada abang tukang kopi keliling/bakso yang ikutan melongo lihat chart merah, atau kucing kampung numpang tidur di atas laptop.
 
     4. BAHASA: Indonesia.
   `;
@@ -78,7 +66,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             keyTakeaway: { type: Type.STRING },
             visualDescription: { 
               type: Type.STRING, 
-              description: "Deskripsi adegan visual yang detail, ramai, dan dinamis berdasarkan skenario." 
+              description: "Deskripsi adegan visual yang detail, ramai, dinamis, dan memiliki unsur humor lokal/relatable, disesuaikan dengan makna narasi." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -124,7 +112,7 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
     
     DETAIL KARAKTER UTAMA (Pastikan dia ada di tengah adegan ini): ${characterDescription}
     
-    ATMOSFER: Pencahayaan hangat sinematik, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable.
+    ATMOSFER: Pencahayaan hangat sinematik, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable dengan budaya lokal.
     
     NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, teks rusak, sepi, kosong.
   `;
