@@ -9,7 +9,11 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey: apiKey || 'DUMMY_KEY_FOR_BUILD' });
 
 // 1. FUNGSI GENERATE TEKS & SKENARIO VISUAL (OTAK KREATIF)
-export const generateTradingNarrative = async (quote: string, mood: string = 'mentor'): Promise<GeneratedContent> => {
+export const generateTradingNarrative = async (
+  quote: string, 
+  mood: string = 'mentor',
+  marketType: 'IDX' | 'GLOBAL' | 'UNIVERSAL' = 'UNIVERSAL' // <-- PARAMETER BARU
+): Promise<GeneratedContent> => {
   if (!apiKey) throw new Error("API Key is missing. Please check your configuration.");
 
   const modelId = "gemini-3-flash-preview";
@@ -20,29 +24,36 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
     mentor: "TONE: Edukatif, bijak, profesional. Berbagi pengalaman sebagai sesama trader yang sudah makan asam garam."
   };
 
-  const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
+  // --- LINGKUNGAN MARKET (MARKET ENVIRONMENT) ---
+  const marketDirectives = {
+    IDX: "FOKUS MARKET: Bursa Saham Indonesia (IHSG). Gunakan metafora lokal (Bandar, Ritel, ARA/ARB). VISUAL: Bernuansa lokal Indonesia yang kental (SCBD, tongkrongan kopi, hiruk pikuk Jakarta).",
+    GLOBAL: "FOKUS MARKET: Forex, Gold & Crypto. Gunakan metafora institusional (Smart Money, Liquidity, HFT, Global Macro). VISUAL: Bernuansa profesional tingkat tinggi, setup multi-monitor canggih, elemen emas/kripto, atau vibe Wall Street/Pusat Komando.",
+    UNIVERSAL: "FOKUS MARKET: Trading Psikologi secara umum. VISUAL: Campuran elemen lokal yang elegan dengan profesionalisme trader."
+  };
 
-  // --- LOGIC BARU: FULL IMPROVISASI AI BERDASARKAN MAKNA QUOTE ---
+  const currentMoodTone = moodDirectives[mood as keyof typeof moodDirectives] || moodDirectives.mentor;
+  const currentMarketVibe = marketDirectives[marketType];
+
   const prompt = `
-    Kamu adalah Strategi Konten Viral dan Creative Art Director.
+    Kamu adalah Strategi Konten Viral dan Creative Art Director untuk "TN Navigator UNIVERSAL".
     Persona Saat Ini: ${currentMoodTone}
-    Target Audiens: Trader retail di Indonesia (Saham, Crypto, Forex).
+    Target Audiens: Trader retail di Indonesia.
+    ${currentMarketVibe}
     
     TUGAS UTAMA: 
     Ubah pemikiran ini: "${quote}" menjadi paket konten viral (JSON) dengan narasi yang kuat.
-    Sekaligus, rancang adegan visual yang SANGAT RELEVAN secara emosional dengan makna di balik quote tersebut.
+    Sekaligus, rancang adegan visual yang SANGAT RELEVAN secara emosional dengan makna di balik quote tersebut dan SESUAI DENGAN FOKUS MARKET.
 
     Panduan:
     1. GAYA NARASI: Bahasa Indonesia sehari-hari (relatable), tajam, tidak menggurui tapi menyadarkan.
     
-    2. ADEGAN VISUAL (KREATIVITAS BEBAS & IMPROVISASI): 
-       Evaluasi makna inti dari "${quote}". Lalu, CIPTAKAN SATU adegan visual yang unik, out-of-the-box, dan tidak klise untuk merepresentasikan makna tersebut. Biarkan imajinasimu liar!
+    2. ADEGAN VISUAL (KREATIVITAS & IMPROVISASI): 
+       Evaluasi makna inti dari "${quote}". Lalu, CIPTAKAN SATU adegan visual yang unik, out-of-the-box, dan tidak klise.
        
-       PANDUAN VISUAL (BEBASKAN IMAJINASI): 
-        - LOKASI & SUASANA: Improvisasilah secara total. Pilih setting (outdoor/indoor), waktu, dan cuaca yang paling dramatis untuk mendukung quote ini. Jangan ada pengulangan tema dari adegan sebelumnya.
-        - DINAMIKA KARAKTER: Karakter utama (pria 45 tahun) tidak boleh sendirian. Harus ada interaksi atau kehadiran figur-figur lain di sekitarnya yang memperkuat kontras pesan (misal: orang lain sibuk, panik, santai, atau sedang bekerja).
-        - DETAIL LOKAL: Masukkan satu atau dua elemen visual khas Indonesia yang unik dan tidak terduga. Hindari penggunaan objek yang itu-itu saja.
-        - EKSPRESI & CAHAYA: Deskripsikan dengan sangat detail bagaimana cahaya jatuh di adegan tersebut dan apa yang tersirat dari wajah setiap orang di sana.
+       PANDUAN VISUAL: 
+        - LOKASI & SUASANA: Sesuaikan dengan FOKUS MARKET di atas. (Jika Global, buat lebih internasional/institusional. Jika IDX, buat lebih lokal).
+        - DINAMIKA KARAKTER: Karakter utama (pria 45 tahun) tidak boleh sendirian. Harus ada interaksi atau kontras dengan lingkungan sekitarnya.
+        - EKSPRESI & CAHAYA: Deskripsikan dengan sangat detail pencahayaan dramatis dan ekspresi wajah.
        
     3. BAHASA: Indonesia.
   `;
@@ -61,7 +72,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
             keyTakeaway: { type: Type.STRING },
             visualDescription: { 
               type: Type.STRING, 
-              description: "Deskripsi adegan visual hasil improvisasi bebas AI, sangat detail, ramai, dan penuh elemen lokal, disesuaikan murni dengan makna quote." 
+              description: "Deskripsi adegan visual hasil improvisasi AI, sangat detail, disesuaikan murni dengan makna quote dan FOKUS MARKET (Lokal vs Global)." 
             },
             videoScript: {
               type: Type.ARRAY,
@@ -92,7 +103,7 @@ export const generateTradingNarrative = async (quote: string, mood: string = 'me
 export const generateTradingVisual = async (visualDescription: string, takeaway: string): Promise<string | undefined> => {
   if (!apiKey) return undefined;
 
-  // KARAKTER UTAMA: Representasi User (Teman Seperjuangan)
+  // KARAKTER UTAMA: Representasi User (Wall Journey / Teman Seperjuangan)
   const characterDescription = `
     KARAKTER UTAMA: Pria chibi dewasa (usia sekitar 45 tahun) dengan penampilan santai tapi rapi.
     RAMBUT: Pendek, gaya sisir pinggir, ada uban/perak jelas di bagian pelipis (sides).
@@ -107,7 +118,7 @@ export const generateTradingVisual = async (visualDescription: string, takeaway:
     
     DETAIL KARAKTER UTAMA (Pastikan dia ada di tengah adegan ini): ${characterDescription}
     
-    ATMOSFER: Pencahayaan dramatis atau sinematik sesuai mood adegan, kedalaman lapangan luas, banyak detail latar belakang yang humoris dan relatable dengan budaya lokal Indonesia.
+    ATMOSFER: Pencahayaan dramatis atau sinematik sesuai mood adegan, kedalaman lapangan luas, background sangat detail dan sesuai dengan deskripsi adegan.
     
     NEGATIVE PROMPT: realistis, fotorealistik, proporsi manusia nyata, horor, buram, wajah cacat, anatomi buruk, anggota badan ekstra, watermark, logo, teks rusak, sepi, kosong.
   `;

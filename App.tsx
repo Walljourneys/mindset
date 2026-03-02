@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, AlertCircle, BarChart3, Share2, Image as ImageIcon } from 'lucide-react';
+import { TrendingUp, AlertCircle, BarChart3, Share2, Image as ImageIcon, Globe, Building2, Zap } from 'lucide-react';
 import InputSection from './components/InputSection';
 import OutputSection from './components/OutputSection';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -12,18 +12,21 @@ function App() {
   const [result, setResult] = useState<GeneratedContent | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  // NEW: State untuk menyimpan pilihan mood
+  // State untuk menyimpan pilihan mood
   const [activeMood, setActiveMood] = useState('mentor');
+  
+  // NEW: State untuk menyimpan pilihan Market Target
+  const [activeMarket, setActiveMarket] = useState<'IDX' | 'GLOBAL' | 'UNIVERSAL'>('UNIVERSAL');
 
-  // UPDATE: Terima quote dari InputSection, tapi gunakan activeMood dari state
+  // UPDATE: Terima quote dari InputSection, kirim quote, mood, DAN market
   const handleGenerateText = async (quote: string) => {
     setLoadingState('loading');
     setError(null);
     setResult(null);
 
     try {
-      // Kirim quote DAN mood ke AI
-      const textData = await generateTradingNarrative(quote, activeMood);
+      // Kirim quote, mood, dan target market ke AI
+      const textData = await generateTradingNarrative(quote, activeMood, activeMarket);
       setResult(textData);
       setLoadingState('success');
     } catch (err: any) {
@@ -33,12 +36,12 @@ function App() {
     }
   };
 
-    const handleGenerateImage = async () => {
+  const handleGenerateImage = async () => {
     if (!result || isImageLoading) return;
     
     setIsImageLoading(true);
     try {
-      // UPDATE: Kirim visualDescription (deskripsi scene unik dari AI) 
+      // Kirim visualDescription (deskripsi scene unik dari AI) 
       // dan keyTakeaway (teks untuk ditulis di background)
       const imageUrl = await generateTradingVisual(result.visualDescription, result.keyTakeaway);
       
@@ -83,34 +86,65 @@ function App() {
         {/* Main Content Area */}
         <main className="w-full flex flex-col items-center">
           
-          {/* NEW: Mood Selector UI */}
-          <div className="w-full max-w-2xl mb-8 animate-fade-in">
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block text-center">
-              Pilih Gaya Konten
-            </label>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { id: 'mentor', label: 'Mentor', emoji: '👴', activeColor: 'border-blue-500 bg-blue-500/10 text-blue-400' },
-                { id: 'tamparan', label: 'Tamparan', emoji: '🥊', activeColor: 'border-red-500 bg-red-500/10 text-red-400' },
-                { id: 'stoic', label: 'Stoic', emoji: '🏛️', activeColor: 'border-teal-500 bg-teal-500/10 text-teal-400' }
-              ].map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => setActiveMood(m.id)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300
-                    ${activeMood === m.id 
-                      ? `${m.activeColor} shadow-[0_0_20px_rgba(0,0,0,0.3)] scale-105` 
-                      : 'border-gray-800 bg-gray-900/50 text-gray-500 hover:border-gray-700 hover:bg-gray-800'
-                    }`}
-                >
-                  <span className="text-2xl mb-2 filter drop-shadow-md">{m.emoji}</span>
-                  <span className="text-[11px] font-black uppercase tracking-wider">{m.label}</span>
-                </button>
-              ))}
+          <div className="w-full max-w-2xl mb-8 flex flex-col md:flex-row gap-6 animate-fade-in">
+            
+            {/* Market Selector UI */}
+            <div className="flex-1">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block text-center md:text-left">
+                Target Market
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'IDX', label: 'IDX (Lokal)', icon: <Building2 size={18} />, color: 'border-cyan-500 bg-cyan-500/10 text-cyan-400' },
+                  { id: 'GLOBAL', label: 'Global (FX/Gold)', icon: <Globe size={18} />, color: 'border-blue-500 bg-blue-500/10 text-blue-400' },
+                  { id: 'UNIVERSAL', label: 'Universal', icon: <Zap size={18} />, color: 'border-yellow-500 bg-yellow-500/10 text-yellow-400' }
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveMarket(m.id as any)}
+                    className={`flex flex-col items-center justify-center py-3 px-2 rounded-xl border-2 transition-all duration-300
+                      ${activeMarket === m.id 
+                        ? `${m.color} shadow-[0_0_15px_rgba(0,0,0,0.2)] scale-105` 
+                        : 'border-gray-800 bg-gray-900/50 text-gray-500 hover:border-gray-700 hover:bg-gray-800 hover:text-gray-300'
+                      }`}
+                  >
+                    <span className="mb-1">{m.icon}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-center leading-tight">{m.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Mood Selector UI */}
+            <div className="flex-1">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 block text-center md:text-left">
+                Gaya Konten
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'mentor', label: 'Mentor', emoji: '👴', color: 'border-emerald-500 bg-emerald-500/10 text-emerald-400' },
+                  { id: 'tamparan', label: 'Tamparan', emoji: '🥊', color: 'border-red-500 bg-red-500/10 text-red-400' },
+                  { id: 'stoic', label: 'Stoic', emoji: '🏛️', color: 'border-purple-500 bg-purple-500/10 text-purple-400' }
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveMood(m.id)}
+                    className={`flex flex-col items-center justify-center py-3 px-2 rounded-xl border-2 transition-all duration-300
+                      ${activeMood === m.id 
+                        ? `${m.color} shadow-[0_0_15px_rgba(0,0,0,0.2)] scale-105` 
+                        : 'border-gray-800 bg-gray-900/50 text-gray-500 hover:border-gray-700 hover:bg-gray-800 hover:text-gray-300'
+                      }`}
+                  >
+                    <span className="text-lg mb-1 filter drop-shadow-md">{m.emoji}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">{m.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
           </div>
 
-          {/* Input Section tetap sama, dia tinggal manggil onGenerate pas diklik */}
+          {/* Input Section */}
           <InputSection onGenerate={handleGenerateText} isLoading={loadingState === 'loading'} />
 
           {loadingState === 'loading' && <LoadingSpinner />}
@@ -123,7 +157,7 @@ function App() {
           )}
 
           {loadingState === 'success' && result && (
-            <div className="mt-8 w-full flex justify-center">
+            <div className="mt-8 w-full flex justify-center animate-fade-in">
               <OutputSection 
                 data={result} 
                 onGenerateVisual={handleGenerateImage} 
@@ -134,7 +168,7 @@ function App() {
 
           {/* Empty State / Initial Instructions */}
           {loadingState === 'idle' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mt-12 opacity-50">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl mt-12 opacity-50 animate-fade-in">
               <div className="p-6 rounded-xl border border-white/5 bg-white/5">
                 <BarChart3 className="mb-3 text-gray-500" />
                 <h3 className="font-bold text-white mb-2">Quote Input</h3>
@@ -154,8 +188,8 @@ function App() {
           )}
         </main>
 
-        <footer className="mt-20 text-center text-gray-600 text-sm">
-          <p>Powered by Navigator IDX/FX • Wall Journey</p>
+        <footer className="mt-20 text-center text-gray-600 text-[10px] tracking-widest uppercase font-bold">
+          <p>Powered by Navigator IDX & GLOBAL • Wall Journey</p>
         </footer>
       </div>
     </div>

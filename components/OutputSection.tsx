@@ -76,8 +76,8 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       // a. Gambar foto asli dari AI
       ctx.drawImage(img, 0, 0);
 
-      // b. Setting Core Message (Anti-Typo & Handwriting Style)
-      const text = data.keyTakeaway; // Tidak pakai toUpperCase biar lebih alami
+      // b. Setting Core Message (Huruf Kapital Semua Biar Nendang)
+      const text = data.keyTakeaway.toUpperCase(); // <-- UPDATE DI SINI KAPTEN!
       const padding = canvas.width * 0.08;
       const maxWidth = canvas.width - (padding * 2);
 
@@ -103,7 +103,7 @@ const OutputSection: React.FC<OutputSectionProps> = ({ data, onGenerateVisual, i
       }
       lines.push(line);
 
-// --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
+      // --- PERBAIKAN: Posisi dinaikkan biar gak nutupin muka ---
       let y = canvas.height * 0.05; 
 
       // Background Box Hitam (Lebih smooth)
