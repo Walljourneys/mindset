@@ -6,7 +6,7 @@ if (!apiKey) {
   console.error("API_KEY is missing from environment variables.");
 }
 
-const ai = new GoogleGenAI({ apiKey: apiKey || 'DUMMY_KEY_FOR_BUILD' });
+const ai = new GoogleGenAI({ apiKey: apiKey || 'VITE_GEMINI_API_KEY' });
 
 // 1. FUNGSI GENERATE TEKS & SKENARIO VISUAL (OTAK KREATIF)
 export const generateTradingNarrative = async (
